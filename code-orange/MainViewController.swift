@@ -11,10 +11,11 @@ import GoogleMaps
 
 class MainViewController: UIViewController {
   
-  public weak var locationProvider: LocationProvider?
-  public weak var coordinatesProvider: CoordinatesProvider?
+  public weak var currentLocationProvider: CurrentLocationProvider?
+  private var locationsProvider: LocationsProvider?
+  private var markers = [GMSMarker]()
 
-  private var coordinates = [CLLocationCoordinate2D]() {
+  private var locations: Locations? {
     didSet {
       reloadCoordinates()
     }
@@ -66,7 +67,7 @@ class MainViewController: UIViewController {
   }()
   
   private lazy var mapView: GMSMapView = {
-    let location = locationProvider?.currentLocation ?? MainViewController.defaultLocation
+    let location = currentLocationProvider?.currentLocation ?? MainViewController.defaultLocation
     let mapView = GMSMapView(frame: .zero, camera: GMSCameraPosition(target: location, zoom: MainViewController.initialZoomLevel))
     mapView.isMyLocationEnabled = true
     return mapView
@@ -139,17 +140,32 @@ class MainViewController: UIViewController {
     super.viewDidLoad()
     view.addSubview(mainStack)
     mainStack.pin(to: view, anchors: [.leading(0), .trailing(0), .top(28), .bottom(0)])
-    // remove the next line when data becomes avaialble
-    coordinatesProvider = mockedCoordinatesProvider
-    coordinates = coordinatesProvider?.coordinates ?? []
-    reloadCoordinates()
+    loadLocations()
+  }
+  
+  private func loadLocations() {
+    let locationsMatcher = LocationMatcher(matchingTimeThreshold: 30.minutes,
+                                           mathcingDistanceThresholdInMeters: 30)
+    let locationsProvider = LocationsProvider(locationMatcher: locationsMatcher)
+    self.locationsProvider = locationsProvider
+    locations = locationsProvider.getLocations()
   }
   
   private func reloadCoordinates() {
-    coordinates.forEach {
+    guard let locations = locations else { return }
+    markers.forEach { $0.map = nil }
+    locations.matchedLocations.forEach {
       let marker = GMSMarker()
-      marker.position = $0
-      marker.snippet = "Text"
+      let imageView = UIImageView(image: UIImage(named: "mapAnnotation"))
+      imageView.tintColor = .orange
+      marker.iconView = imageView
+      marker.position = CLLocationCoordinate2D(latitude: $0.location.lat, longitude: $0.location.lon)
+      marker.map = mapView
+    }
+    locations.otherLocations.forEach {
+      let marker = GMSMarker()
+      marker.icon = UIImage(named: "mapAnnotation")
+      marker.position = CLLocationCoordinate2D(latitude: $0.location.lat, longitude: $0.location.lon)
       marker.map = mapView
     }
   }
@@ -171,21 +187,6 @@ class MainViewController: UIViewController {
   }
 }
 
-extension MainViewController: CoordinatesProviderDelegate {
-  func coordinatesProviderUpdated(_ sender: CoordinatesProvider) {
-    coordinates = sender.coordinates
-    reloadCoordinates()
-  }
-}
-
-// remove this when real data becomes available
-private let mockedCoordinatesProvider = MockedCoordinatesProvider()
-private class MockedCoordinatesProvider: CoordinatesProvider {
-  var delegate: CoordinatesProviderDelegate?
-  var coordinates: [CLLocationCoordinate2D] { return SOME_MOCKED_COORDINATES }
-  let SOME_MOCKED_COORDINATES = [
-    CLLocationCoordinate2D(latitude: 32.848711, longitude: 35.064987),
-    CLLocationCoordinate2D(latitude: 32.860300, longitude: 35.184660),
-    CLLocationCoordinate2D(latitude: 31.783751, longitude: 35.192180)
-  ]
+private extension Double {
+  var minutes: TimeInterval { return self * 60.0 }
 }
