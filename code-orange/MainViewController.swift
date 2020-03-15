@@ -20,8 +20,8 @@ class MainViewController: UIViewController {
       reloadCoordinates()
     }
   }
-  private static let initialZoomLevel: Float = 7.5
-  private static let defaultLocation = CLLocationCoordinate2D(latitude: 31.4013742, longitude: 35.2516147)
+  private static let initialZoomLevel: Float = 9
+  private static let defaultLocation = CLLocationCoordinate2D(latitude: 32.086801, longitude: 34.789749)
 
   private lazy var mainStack: UIStackView = {
     let stackView = UIStackView()
@@ -164,8 +164,16 @@ class MainViewController: UIViewController {
       markers.append(marker)
     }
     locations.otherLocations.forEach {
+      let circleView = UIView()
+      circleView.translatesAutoresizingMaskIntoConstraints = false
+      circleView.backgroundColor = .purple
+      circleView.alpha = 0.4
+      circleView.setAutoLayoutWidth(30)
+      circleView.setSquareRatio()
+      circleView.layer.masksToBounds = true
+      circleView.layer.cornerRadius = 15
       let marker = GMSMarker()
-      marker.icon = UIImage(named: "mapAnnotation")
+      marker.iconView = circleView
       marker.position = CLLocationCoordinate2D(latitude: $0.location.lat, longitude: $0.location.lon)
       marker.map = mapView
       markers.append(marker)
