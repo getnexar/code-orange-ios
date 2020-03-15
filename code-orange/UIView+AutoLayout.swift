@@ -85,22 +85,6 @@ public extension UIView {
     pin(to: superview, anchors: anchors)
   }
     
-  func fillSafeArea(){
-    guard let superview = superview else {
-      return
-    }
-    pinToSafeArea(of: superview, anchors: [.top(0), .bottom(0), .leading(0), .trailing(0)])
-  }
-  
-  func pinToSafeArea(of view: UIView, anchors: [Anchor]) {
-    let margins = view.safeAreaLayoutGuide
-    pin(to: margins, anchors: anchors)
-  }
-  
-  func pinToSafeArea(of viewController: UIViewController, anchors: [Anchor]) {
-    pinToSafeArea(of: viewController.view, anchors: anchors)
-  }
-  
   func position(above view: UIView,
                 constant: CGFloat = 0) {
     bottomAnchor.constraint(equalTo: view.topAnchor, constant: -constant).isActive = true
