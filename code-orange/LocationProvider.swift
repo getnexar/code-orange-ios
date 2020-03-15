@@ -7,3 +7,8 @@
 //
 
 import Foundation
+import CoreLocation
+
+protocol LocationProvider: class {
+  var currentLocation: CLLocationCoordinate2D { get }
+}

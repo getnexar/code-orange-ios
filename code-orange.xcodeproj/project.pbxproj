@@ -8,13 +8,15 @@
 
 /* Begin PBXBuildFile section */
 		7789EA6F241E532400BC92E4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7789EA6E241E532400BC92E4 /* AppDelegate.swift */; };
-		7789EA73241E532400BC92E4 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7789EA72241E532400BC92E4 /* ViewController.swift */; };
+		7789EA73241E532400BC92E4 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7789EA72241E532400BC92E4 /* MainViewController.swift */; };
 		7789EA76241E532400BC92E4 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7789EA74241E532400BC92E4 /* Main.storyboard */; };
 		7789EA79241E532400BC92E4 /* code_orange.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 7789EA77241E532400BC92E4 /* code_orange.xcdatamodeld */; };
 		7789EA7B241E532400BC92E4 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7789EA7A241E532400BC92E4 /* Assets.xcassets */; };
 		7789EA7E241E532400BC92E4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7789EA7C241E532400BC92E4 /* LaunchScreen.storyboard */; };
 		7789EA89241E532400BC92E4 /* code_orangeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7789EA88241E532400BC92E4 /* code_orangeTests.swift */; };
 		77AA0548241E71BC002EC3DF /* UIView+AutoLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77AA0547241E71BC002EC3DF /* UIView+AutoLayout.swift */; };
+		77AA054A241EB904002EC3DF /* LocationProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77AA0549241EB904002EC3DF /* LocationProvider.swift */; };
+		77AA054C241EB928002EC3DF /* CoordinatesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77AA054B241EB928002EC3DF /* CoordinatesProvider.swift */; };
 		DAEE11DFC0C433E44F174B2F /* Pods_code_orangeTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D05ABFE5D0AAECB7FA466E9 /* Pods_code_orangeTests.framework */; };
 		EBC2BDDE74924428CC46DD47 /* Pods_code_orange.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DA767D39FD6802378DBB90C6 /* Pods_code_orange.framework */; };
 /* End PBXBuildFile section */
@@ -36,7 +38,7 @@
 		5D05ABFE5D0AAECB7FA466E9 /* Pods_code_orangeTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_code_orangeTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		7789EA6B241E532400BC92E4 /* code-orange.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "code-orange.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7789EA6E241E532400BC92E4 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		7789EA72241E532400BC92E4 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		7789EA72241E532400BC92E4 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		7789EA75241E532400BC92E4 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		7789EA78241E532400BC92E4 /* code_orange.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = code_orange.xcdatamodel; sourceTree = "<group>"; };
 		7789EA7A241E532400BC92E4 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -46,6 +48,8 @@
 		7789EA88241E532400BC92E4 /* code_orangeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = code_orangeTests.swift; sourceTree = "<group>"; };
 		7789EA8A241E532400BC92E4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		77AA0547241E71BC002EC3DF /* UIView+AutoLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+AutoLayout.swift"; sourceTree = "<group>"; };
+		77AA0549241EB904002EC3DF /* LocationProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationProvider.swift; sourceTree = "<group>"; };
+		77AA054B241EB928002EC3DF /* CoordinatesProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoordinatesProvider.swift; sourceTree = "<group>"; };
 		B2526FADFC6649CE407724FA /* Pods-code-orangeTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-code-orangeTests.release.xcconfig"; path = "Target Support Files/Pods-code-orangeTests/Pods-code-orangeTests.release.xcconfig"; sourceTree = "<group>"; };
 		DA767D39FD6802378DBB90C6 /* Pods_code_orange.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_code_orange.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -105,7 +109,9 @@
 			isa = PBXGroup;
 			children = (
 				7789EA6E241E532400BC92E4 /* AppDelegate.swift */,
-				7789EA72241E532400BC92E4 /* ViewController.swift */,
+				7789EA72241E532400BC92E4 /* MainViewController.swift */,
+				77AA054B241EB928002EC3DF /* CoordinatesProvider.swift */,
+				77AA0549241EB904002EC3DF /* LocationProvider.swift */,
 				77AA0547241E71BC002EC3DF /* UIView+AutoLayout.swift */,
 				7789EA74241E532400BC92E4 /* Main.storyboard */,
 				7789EA7A241E532400BC92E4 /* Assets.xcassets */,
@@ -302,10 +308,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7789EA73241E532400BC92E4 /* ViewController.swift in Sources */,
+				7789EA73241E532400BC92E4 /* MainViewController.swift in Sources */,
 				77AA0548241E71BC002EC3DF /* UIView+AutoLayout.swift in Sources */,
 				7789EA6F241E532400BC92E4 /* AppDelegate.swift in Sources */,
 				7789EA79241E532400BC92E4 /* code_orange.xcdatamodeld in Sources */,
+				77AA054C241EB928002EC3DF /* CoordinatesProvider.swift in Sources */,
+				77AA054A241EB904002EC3DF /* LocationProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

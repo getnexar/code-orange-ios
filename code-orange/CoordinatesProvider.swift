@@ -7,3 +7,13 @@
 //
 
 import Foundation
+import CoreLocation
+
+protocol CoordinatesProviderDelegate: class {
+  func coordinatesProviderUpdated(_ sender: CoordinatesProvider)
+}
+
+protocol CoordinatesProvider: class {
+  var coordinates: [CLLocationCoordinate2D] { get }
+  var delegate: CoordinatesProviderDelegate? { get set }
+}
