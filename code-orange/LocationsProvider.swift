@@ -31,7 +31,7 @@ class LocationsProvider {
     }
     
     let matchingLocations = locationMatcher.matchLocations(of: coronaLocations, and: userLocations)
-    let coronaNotMatchingLocations = coronaLocations.filter({ matchingLocations.contains($0) })
+    let coronaNotMatchingLocations = coronaLocations.filter { !matchingLocations.contains($0) }
     return Locations(matchedLocations: matchingLocations, otherLocations: coronaNotMatchingLocations)
   }
   

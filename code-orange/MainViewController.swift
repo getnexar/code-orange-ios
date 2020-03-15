@@ -161,12 +161,14 @@ class MainViewController: UIViewController {
       marker.iconView = imageView
       marker.position = CLLocationCoordinate2D(latitude: $0.location.lat, longitude: $0.location.lon)
       marker.map = mapView
+      markers.append(marker)
     }
     locations.otherLocations.forEach {
       let marker = GMSMarker()
       marker.icon = UIImage(named: "mapAnnotation")
       marker.position = CLLocationCoordinate2D(latitude: $0.location.lat, longitude: $0.location.lon)
       marker.map = mapView
+      markers.append(marker)
     }
   }
   
