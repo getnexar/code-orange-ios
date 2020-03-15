@@ -9,20 +9,7 @@
 import UIKit
 import GoogleMaps
 
-protocol LocationProvider: class {
-  var currentLocation: CLLocationCoordinate2D { get }
-}
-
-protocol CoordinatesProviderDelegate: class {
-  func coordinatesProviderUpdated(_ sender: CoordinatesProvider)
-}
-
-protocol CoordinatesProvider: class {
-  var coordinates: [CLLocationCoordinate2D] { get }
-  var delegate: CoordinatesProviderDelegate? { get set }
-}
-
-class ViewController: UIViewController {
+class MainViewController: UIViewController {
   
   public weak var locationProvider: LocationProvider?
   public weak var coordinatesProvider: CoordinatesProvider?
@@ -79,8 +66,8 @@ class ViewController: UIViewController {
   }()
   
   private lazy var mapView: GMSMapView = {
-    let location = locationProvider?.currentLocation ?? ViewController.defaultLocation
-    let mapView = GMSMapView(frame: .zero, camera: GMSCameraPosition(target: location, zoom: ViewController.initialZoomLevel))
+    let location = locationProvider?.currentLocation ?? MainViewController.defaultLocation
+    let mapView = GMSMapView(frame: .zero, camera: GMSCameraPosition(target: location, zoom: MainViewController.initialZoomLevel))
     mapView.isMyLocationEnabled = true
     return mapView
   }()
@@ -184,7 +171,7 @@ class ViewController: UIViewController {
   }
 }
 
-extension ViewController: CoordinatesProviderDelegate {
+extension MainViewController: CoordinatesProviderDelegate {
   func coordinatesProviderUpdated(_ sender: CoordinatesProvider) {
     coordinates = sender.coordinates
     reloadCoordinates()
