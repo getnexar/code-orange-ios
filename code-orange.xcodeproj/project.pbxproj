@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		233B0F45241E8CF600F776CC /* LocationMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 233B0F44241E8CF600F776CC /* LocationMatcher.swift */; };
+		233B0F47241E8D2600F776CC /* RecordedLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 233B0F46241E8D2600F776CC /* RecordedLocation.swift */; };
+		233B0F4A241EA53B00F776CC /* LocationMatcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 233B0F48241EA53000F776CC /* LocationMatcherTests.swift */; };
+		233B0F4C241EAD7B00F776CC /* LocationsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 233B0F4B241EAD7B00F776CC /* LocationsProvider.swift */; };
+		233B0F4E241EB18C00F776CC /* RecordedLocationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 233B0F4D241EB18C00F776CC /* RecordedLocationTests.swift */; };
 		7789EA6F241E532400BC92E4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7789EA6E241E532400BC92E4 /* AppDelegate.swift */; };
 		7789EA73241E532400BC92E4 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7789EA72241E532400BC92E4 /* MainViewController.swift */; };
 		7789EA76241E532400BC92E4 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7789EA74241E532400BC92E4 /* Main.storyboard */; };
@@ -15,8 +20,7 @@
 		7789EA7E241E532400BC92E4 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7789EA7C241E532400BC92E4 /* LaunchScreen.storyboard */; };
 		7789EA89241E532400BC92E4 /* code_orangeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7789EA88241E532400BC92E4 /* code_orangeTests.swift */; };
 		77AA0548241E71BC002EC3DF /* UIView+AutoLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77AA0547241E71BC002EC3DF /* UIView+AutoLayout.swift */; };
-		77AA054A241EB904002EC3DF /* LocationProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77AA0549241EB904002EC3DF /* LocationProvider.swift */; };
-		77AA054C241EB928002EC3DF /* CoordinatesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77AA054B241EB928002EC3DF /* CoordinatesProvider.swift */; };
+		77AA054A241EB904002EC3DF /* CurrentLocationProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77AA0549241EB904002EC3DF /* CurrentLocationProvider.swift */; };
 		DAEE11DFC0C433E44F174B2F /* Pods_code_orangeTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D05ABFE5D0AAECB7FA466E9 /* Pods_code_orangeTests.framework */; };
 		EBC2BDDE74924428CC46DD47 /* Pods_code_orange.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DA767D39FD6802378DBB90C6 /* Pods_code_orange.framework */; };
 /* End PBXBuildFile section */
@@ -32,6 +36,11 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		233B0F44241E8CF600F776CC /* LocationMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationMatcher.swift; sourceTree = "<group>"; };
+		233B0F46241E8D2600F776CC /* RecordedLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordedLocation.swift; sourceTree = "<group>"; };
+		233B0F48241EA53000F776CC /* LocationMatcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationMatcherTests.swift; sourceTree = "<group>"; };
+		233B0F4B241EAD7B00F776CC /* LocationsProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationsProvider.swift; sourceTree = "<group>"; };
+		233B0F4D241EB18C00F776CC /* RecordedLocationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordedLocationTests.swift; sourceTree = "<group>"; };
 		3130236DCDD5C9020FEC93E4 /* Pods-code-orangeTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-code-orangeTests.debug.xcconfig"; path = "Target Support Files/Pods-code-orangeTests/Pods-code-orangeTests.debug.xcconfig"; sourceTree = "<group>"; };
 		46DA6F21814C524D83C16103 /* Pods-code-orange.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-code-orange.debug.xcconfig"; path = "Target Support Files/Pods-code-orange/Pods-code-orange.debug.xcconfig"; sourceTree = "<group>"; };
 		4A0A0F8B1012E417F5BBBA96 /* Pods-code-orange.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-code-orange.release.xcconfig"; path = "Target Support Files/Pods-code-orange/Pods-code-orange.release.xcconfig"; sourceTree = "<group>"; };
@@ -48,8 +57,7 @@
 		7789EA88241E532400BC92E4 /* code_orangeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = code_orangeTests.swift; sourceTree = "<group>"; };
 		7789EA8A241E532400BC92E4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		77AA0547241E71BC002EC3DF /* UIView+AutoLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+AutoLayout.swift"; sourceTree = "<group>"; };
-		77AA0549241EB904002EC3DF /* LocationProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationProvider.swift; sourceTree = "<group>"; };
-		77AA054B241EB928002EC3DF /* CoordinatesProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoordinatesProvider.swift; sourceTree = "<group>"; };
+		77AA0549241EB904002EC3DF /* CurrentLocationProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentLocationProvider.swift; sourceTree = "<group>"; };
 		B2526FADFC6649CE407724FA /* Pods-code-orangeTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-code-orangeTests.release.xcconfig"; path = "Target Support Files/Pods-code-orangeTests/Pods-code-orangeTests.release.xcconfig"; sourceTree = "<group>"; };
 		DA767D39FD6802378DBB90C6 /* Pods_code_orange.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_code_orange.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -109,15 +117,17 @@
 			isa = PBXGroup;
 			children = (
 				7789EA6E241E532400BC92E4 /* AppDelegate.swift */,
-				7789EA72241E532400BC92E4 /* MainViewController.swift */,
-				77AA054B241EB928002EC3DF /* CoordinatesProvider.swift */,
-				77AA0549241EB904002EC3DF /* LocationProvider.swift */,
-				77AA0547241E71BC002EC3DF /* UIView+AutoLayout.swift */,
-				7789EA74241E532400BC92E4 /* Main.storyboard */,
 				7789EA7A241E532400BC92E4 /* Assets.xcassets */,
-				7789EA7C241E532400BC92E4 /* LaunchScreen.storyboard */,
-				7789EA7F241E532400BC92E4 /* Info.plist */,
 				7789EA77241E532400BC92E4 /* code_orange.xcdatamodeld */,
+				7789EA7F241E532400BC92E4 /* Info.plist */,
+				7789EA7C241E532400BC92E4 /* LaunchScreen.storyboard */,
+				233B0F44241E8CF600F776CC /* LocationMatcher.swift */,
+				77AA0549241EB904002EC3DF /* CurrentLocationProvider.swift */,
+				233B0F4B241EAD7B00F776CC /* LocationsProvider.swift */,
+				7789EA74241E532400BC92E4 /* Main.storyboard */,
+				7789EA72241E532400BC92E4 /* MainViewController.swift */,
+				233B0F46241E8D2600F776CC /* RecordedLocation.swift */,
+				77AA0547241E71BC002EC3DF /* UIView+AutoLayout.swift */,
 			);
 			path = "code-orange";
 			sourceTree = "<group>";
@@ -126,7 +136,9 @@
 			isa = PBXGroup;
 			children = (
 				7789EA88241E532400BC92E4 /* code_orangeTests.swift */,
+				233B0F48241EA53000F776CC /* LocationMatcherTests.swift */,
 				7789EA8A241E532400BC92E4 /* Info.plist */,
+				233B0F4D241EB18C00F776CC /* RecordedLocationTests.swift */,
 			);
 			path = "code-orangeTests";
 			sourceTree = "<group>";
@@ -312,8 +324,10 @@
 				77AA0548241E71BC002EC3DF /* UIView+AutoLayout.swift in Sources */,
 				7789EA6F241E532400BC92E4 /* AppDelegate.swift in Sources */,
 				7789EA79241E532400BC92E4 /* code_orange.xcdatamodeld in Sources */,
-				77AA054C241EB928002EC3DF /* CoordinatesProvider.swift in Sources */,
-				77AA054A241EB904002EC3DF /* LocationProvider.swift in Sources */,
+				77AA054A241EB904002EC3DF /* CurrentLocationProvider.swift in Sources */,
+				233B0F4C241EAD7B00F776CC /* LocationsProvider.swift in Sources */,
+				233B0F47241E8D2600F776CC /* RecordedLocation.swift in Sources */,
+				233B0F45241E8CF600F776CC /* LocationMatcher.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -321,7 +335,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				233B0F4E241EB18C00F776CC /* RecordedLocationTests.swift in Sources */,
 				7789EA89241E532400BC92E4 /* code_orangeTests.swift in Sources */,
+				233B0F4A241EA53B00F776CC /* LocationMatcherTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

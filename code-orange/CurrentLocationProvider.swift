@@ -9,6 +9,6 @@
 import Foundation
 import CoreLocation
 
-protocol LocationProvider: class {
+protocol CurrentLocationProvider: class {
   var currentLocation: CLLocationCoordinate2D { get }
 }
