@@ -14,6 +14,9 @@ import CoreData
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
   var window: UIWindow?
+
+  let locationService = LocationService.shared
+
   public lazy var locationsProvider: LocationsProvider = {
     let locationsMatcher = LocationMatcher(matchingTimeThreshold: 30.minutes,
     mathcingDistanceThresholdInMeters: 30)
@@ -22,6 +25,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   
   func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
     GMSServices.provideAPIKey("AIzaSyB57-_ZDUWdRSUi9ladkLO91d8wTlzpC8w")
+
+//    if let launchOptions = launchOptions,
+//      let isLocationKey = launchOptions[UIApplication.LaunchOptionsKey.location] as? Bool,
+//      isLocationKey {
+//      locationService.startUpdatingLocation()
+//
+//    }
+
+    locationService.startUpdatingLocation()
     return true
   }
 
