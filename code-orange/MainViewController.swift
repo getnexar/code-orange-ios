@@ -142,6 +142,10 @@ class MainViewController: UIViewController {
     super.viewDidLoad()
     view.addSubview(mainStack)
     mainStack.pin(to: view, anchors: [.leading(0), .trailing(0), .top(28), .bottom(0)])
+    getFreshLocations()
+  }
+  
+  private func getFreshLocations() {
     locations = locationsProvider?.getLocations()
   }
   
