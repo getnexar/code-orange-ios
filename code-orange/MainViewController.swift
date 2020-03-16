@@ -12,7 +12,9 @@ import GoogleMaps
 class MainViewController: UIViewController {
   
   public weak var currentLocationProvider: CurrentLocationProvider?
-  private var locationsProvider: LocationsProvider?
+  private var locationsProvider: LocationsProvider? {
+    (UIApplication.shared.delegate as? AppDelegate)?.locationsProvider
+  }
   private var markers = [GMSMarker]()
 
   private var locations: Locations? {
@@ -140,20 +142,22 @@ class MainViewController: UIViewController {
     super.viewDidLoad()
     view.addSubview(mainStack)
     mainStack.pin(to: view, anchors: [.leading(0), .trailing(0), .top(28), .bottom(0)])
-    loadLocations()
-  }
-  
-  private func loadLocations() {
-    let locationsMatcher = LocationMatcher(matchingTimeThreshold: 30.minutes,
-                                           mathcingDistanceThresholdInMeters: 30)
-    let locationsProvider = LocationsProvider(locationMatcher: locationsMatcher)
-    self.locationsProvider = locationsProvider
-    locations = locationsProvider.getLocations()
+    locations = locationsProvider?.getLocations()
   }
   
   private func reloadCoordinates() {
-    guard let locations = locations else { return }
+    removeMarkers()
+    loadMatchedLocations()
+    loadOtherLocations()
+  }
+  
+  private func removeMarkers() {
     markers.forEach { $0.map = nil }
+    markers = []
+  }
+  
+  private func loadMatchedLocations() {
+    guard let locations = locations else { return }
     locations.matchedLocations.forEach {
       let marker = GMSMarker()
       let imageView = UIImageView(image: UIImage(named: "mapAnnotation"))
@@ -163,6 +167,10 @@ class MainViewController: UIViewController {
       marker.map = mapView
       markers.append(marker)
     }
+  }
+  
+  private func loadOtherLocations() {
+    guard let locations = locations else { return }
     locations.otherLocations.forEach {
       let circleView = UIView()
       circleView.translatesAutoresizingMaskIntoConstraints = false
@@ -195,8 +203,4 @@ class MainViewController: UIViewController {
   @objc private func todayTapped() {
     print("today tapped")
   }
-}
-
-private extension Double {
-  var minutes: TimeInterval { return self * 60.0 }
 }
