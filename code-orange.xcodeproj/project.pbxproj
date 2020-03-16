@@ -14,6 +14,8 @@
 		233B0F4E241EB18C00F776CC /* RecordedLocationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 233B0F4D241EB18C00F776CC /* RecordedLocationTests.swift */; };
 		233B0F50241F6A7000F776CC /* StaticData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 233B0F4F241F6A7000F776CC /* StaticData.swift */; };
 		233B0F52241F6C5E00F776CC /* Communicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 233B0F51241F6C5E00F776CC /* Communicator.swift */; };
+		233B0F54241FA01300F776CC /* ChangeStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 233B0F53241FA01300F776CC /* ChangeStatusView.swift */; };
+		233B0F56241FA3CE00F776CC /* Buttons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 233B0F55241FA3CE00F776CC /* Buttons.swift */; };
 		7789EA6F241E532400BC92E4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7789EA6E241E532400BC92E4 /* AppDelegate.swift */; };
 		7789EA73241E532400BC92E4 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7789EA72241E532400BC92E4 /* MainViewController.swift */; };
 		7789EA76241E532400BC92E4 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 7789EA74241E532400BC92E4 /* Main.storyboard */; };
@@ -47,6 +49,10 @@
 		233B0F4D241EB18C00F776CC /* RecordedLocationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordedLocationTests.swift; sourceTree = "<group>"; };
 		233B0F4F241F6A7000F776CC /* StaticData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StaticData.swift; sourceTree = "<group>"; };
 		233B0F51241F6C5E00F776CC /* Communicator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Communicator.swift; sourceTree = "<group>"; };
+		233B0F53241FA01300F776CC /* ChangeStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeStatusView.swift; sourceTree = "<group>"; };
+		233B0F55241FA3CE00F776CC /* Buttons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Buttons.swift; sourceTree = "<group>"; };
+		234AF3E4241FC419008095FE /* he-IL */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "he-IL"; path = "he-IL.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
+		234AF3E5241FC419008095FE /* he-IL */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "he-IL"; path = "he-IL.lproj/Main.strings"; sourceTree = "<group>"; };
 		3130236DCDD5C9020FEC93E4 /* Pods-code-orangeTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-code-orangeTests.debug.xcconfig"; path = "Target Support Files/Pods-code-orangeTests/Pods-code-orangeTests.debug.xcconfig"; sourceTree = "<group>"; };
 		46DA6F21814C524D83C16103 /* Pods-code-orange.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-code-orange.debug.xcconfig"; path = "Target Support Files/Pods-code-orange/Pods-code-orange.debug.xcconfig"; sourceTree = "<group>"; };
 		4A0A0F8B1012E417F5BBBA96 /* Pods-code-orange.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-code-orange.release.xcconfig"; path = "Target Support Files/Pods-code-orange/Pods-code-orange.release.xcconfig"; sourceTree = "<group>"; };
@@ -140,6 +146,8 @@
 				77A3715A241F982400913FB3 /* DrawerView.swift */,
 				233B0F4F241F6A7000F776CC /* StaticData.swift */,
 				233B0F51241F6C5E00F776CC /* Communicator.swift */,
+				233B0F53241FA01300F776CC /* ChangeStatusView.swift */,
+				233B0F55241FA3CE00F776CC /* Buttons.swift */,
 			);
 			path = "code-orange";
 			sourceTree = "<group>";
@@ -231,6 +239,7 @@
 			knownRegions = (
 				en,
 				Base,
+				"he-IL",
 			);
 			mainGroup = 7789EA62241E532300BC92E4;
 			productRefGroup = 7789EA6C241E532400BC92E4 /* Products */;
@@ -335,6 +344,8 @@
 				7789EA73241E532400BC92E4 /* MainViewController.swift in Sources */,
 				233B0F52241F6C5E00F776CC /* Communicator.swift in Sources */,
 				77AA0548241E71BC002EC3DF /* UIView+AutoLayout.swift in Sources */,
+				233B0F56241FA3CE00F776CC /* Buttons.swift in Sources */,
+				233B0F54241FA01300F776CC /* ChangeStatusView.swift in Sources */,
 				7789EA6F241E532400BC92E4 /* AppDelegate.swift in Sources */,
 				77A3715B241F982400913FB3 /* DrawerView.swift in Sources */,
 				7789EA79241E532400BC92E4 /* code_orange.xcdatamodeld in Sources */,
@@ -372,6 +383,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				7789EA75241E532400BC92E4 /* Base */,
+				234AF3E5241FC419008095FE /* he-IL */,
 			);
 			name = Main.storyboard;
 			sourceTree = "<group>";
@@ -380,6 +392,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				7789EA7D241E532400BC92E4 /* Base */,
+				234AF3E4241FC419008095FE /* he-IL */,
 			);
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
@@ -391,6 +404,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -451,6 +465,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
