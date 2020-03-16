@@ -41,7 +41,7 @@ class VisitedLocationsPanel: UIView {
     stackView.axis = .vertical
     stackView.spacing = 16
     stackView.isLayoutMarginsRelativeArrangement = true
-    stackView.layoutMargins = UIEdgeInsets(top: 0, left: 24, bottom: 0, right: 24)
+    stackView.layoutMargins = UIEdgeInsets(top: 0, left: 24, bottom: 24, right: 24)
     stackView.addArrangedSubview(titleAndButtonsStackView)
     stackView.addArrangedSubview(topLabel)
     stackView.addArrangedSubview(bottomLabel)
@@ -62,6 +62,7 @@ class VisitedLocationsPanel: UIView {
 
   private lazy var titleAndButtonsStackView: UIStackView = {
     let stackView = UIStackView()
+    stackView.backgroundColor = .nxGrey10
     stackView.axis = .horizontal
     stackView.spacing = 2
     stackView.alignment = .center
@@ -74,6 +75,7 @@ class VisitedLocationsPanel: UIView {
   private lazy var actionsStackView: UIStackView = {
     let stackView = UIStackView()
     stackView.axis = .horizontal
+    stackView.distribution = .fillEqually
     stackView.spacing = 24
     stackView.alignment = .center
     stackView.addArrangedSubview(healthAdministrationWebsiteButton)
@@ -98,34 +100,47 @@ class VisitedLocationsPanel: UIView {
   private lazy var pagesLabel: UILabel = {
     let label = UILabel()
     label.text = "1/2"
+    label.font = UIFont.systemFont(ofSize: 16)
     return label
   }()
 
   private lazy var addressLabel: UILabel = {
     let label = UILabel()
     label.text = "שדרות בן גוריון 22, תל אביב"
+    label.font = UIFont.boldSystemFont(ofSize: 16)
     return label
   }()
 
   private lazy var timeframeLabel: UILabel = {
     let label = UILabel()
-    
+    label.text = "10:15 - 10:30"
+    label.font = UIFont.systemFont(ofSize: 14)
     return label
   }()
 
   private lazy var topLabel: UILabel = {
-    let attributedText = NSMutableAttributedString(string: "ייתכן שנחשפת באזור לוירוס הקורונה.\n", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 16)])
-    attributedText.append(NSAttributedString(string: "שים לב, ההודעה אינה אומרת שנדבקת.", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16)]))
+    let paragraphStyle = NSMutableParagraphStyle()
+    paragraphStyle.alignment = .justified
+    paragraphStyle.baseWritingDirection = .rightToLeft
+    let attributedText = NSMutableAttributedString(string: "ייתכן שנחשפת באזור לוירוס הקורונה.\n", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 16), NSAttributedString.Key.paragraphStyle: paragraphStyle])
+    attributedText.append(NSAttributedString(string: "שים לב, ההודעה אינה אומרת שנדבקת.", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 16), NSAttributedString.Key.paragraphStyle: paragraphStyle]))
     let label = UILabel()
     label.attributedText = attributedText
+    label.numberOfLines = 0
+    //label.textAlignment = .natural
     return label
   }()
 
   private lazy var bottomLabel: UILabel = {
-    let attributedText = NSMutableAttributedString(string: "צעדים שכדאי לעשות כרגע:\n", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 14)])
-    attributedText.append(NSAttributedString(string: "להיכנס לבידוד, ולמדוד את חום הגוף. אם זיהית תסמינים (חום, שיעול יבש) יש לפנות למד״א.", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14)]))
+    let paragraphStyle = NSMutableParagraphStyle()
+    paragraphStyle.alignment = .justified
+    paragraphStyle.baseWritingDirection = .rightToLeft
+    let attributedText = NSMutableAttributedString(string: "צעדים שכדאי לעשות כרגע:\n", attributes: [NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 14), NSAttributedString.Key.paragraphStyle: paragraphStyle])
+    attributedText.append(NSAttributedString(string: "להיכנס לבידוד, ולמדוד את חום הגוף. אם זיהית תסמינים (חום, שיעול יבש) יש לפנות למד״א.", attributes: [NSAttributedString.Key.font: UIFont.systemFont(ofSize: 14), NSAttributedString.Key.paragraphStyle: paragraphStyle]))
     let label = UILabel()
     label.attributedText = attributedText
+    label.numberOfLines = 0
+    //label.textAlignment = .natural
     return label
   }()
 

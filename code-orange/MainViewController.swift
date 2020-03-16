@@ -182,6 +182,8 @@ class MainViewController: UIViewController {
       marker.map = mapView
       markers.append(marker)
     }
+    guard !locations.matchedLocations.isEmpty else { return }
+    displayMatchedLocationsPanel(locations.matchedLocations)
   }
   
   private func loadOtherLocations() {
@@ -238,17 +240,51 @@ class MainViewController: UIViewController {
       self.drawerView?.show()
     }
   }
+  
+  private func displayMatchedLocationsPanel(_ matchedLocations: [RecordedLocation]) {
+    guard drawerView == nil else { return }
+    let visitedLocationsPanel = VisitedLocationsPanel(locations: matchedLocations)
+    visitedLocationsPanel.delegate = self
+    visitedLocationsPanel.translatesAutoresizingMaskIntoConstraints = false
+    let drawerView = DrawerView()
+    drawerView.contentView = visitedLocationsPanel
+    self.view.addSubview(drawerView)
+    drawerView.translatesAutoresizingMaskIntoConstraints = false
+    drawerView.pinToSuperview(anchors: [.leading(0), .trailing(0), .bottom(-24)])
+    
+    self.drawerView = drawerView
+    UIView.animate(withDuration: 0.4) {
+      self.drawerView?.show()
+    }
+  }
+  
+  private func dismissDrawer() {
+    UIView.animate(withDuration: 0.4, animations: {
+      self.drawerView?.hide()
+    }) { _ in
+      self.drawerView?.removeFromSuperview()
+      self.drawerView = nil
+    }
+  }
 }
 
 extension MainViewController: ChagneStatusViewDelegate {
   func statusChanged(to: StatusOption) {
-    drawerView?.removeFromSuperview()
-    drawerView = nil
+    dismissDrawer()
     // bring on the next screen
   }
   
   func statusChangeDismissed() {
-    self.drawerView?.removeFromSuperview()
-    drawerView = nil
+    dismissDrawer()
+  }
+}
+
+extension MainViewController: VisitedLocationsPanelDelegate {
+  func visitedLocationsPanelCallEmergency() {
+    dismissDrawer()
+  }
+  
+  func visitedLocationsPanelOpenHealthAdministrationWebsite() {
+    dismissDrawer()
   }
 }
