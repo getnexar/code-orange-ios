@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CoreLocation
 
 struct Locations {
   var matchedLocations: [MatchedLocation]
@@ -35,7 +36,7 @@ class LocationsProvider {
     let coronaNotMatchingLocations = coronaLocations.filter { !infectedMatchedLocations.contains($0) }
     return Locations(matchedLocations: matchingLocations, otherLocations: coronaNotMatchingLocations)
   }
-  
+
   private func getStoredCoronaLocations() -> [RecordedLocation]? {
     // this is temp
     let communicator = Communicator()
@@ -55,5 +56,19 @@ class LocationsProvider {
     }
 
     return recordedLocations
+  }
+}
+
+extension LocationsProvider {
+  public func doesCoronaLocationsContain(location: CLLocation, date: Date) -> Bool {
+    let newLocation = RecordedLocation(location: CoronaLocation(lat: location.coordinate.latitude,
+                                                                lon: location.coordinate.longitude),
+                                       startTime: date,
+                                       endTime: date)
+
+    guard let coronaLocations = getStoredCoronaLocations() else { return false }
+
+    let matchingLocations = locationMatcher.matchLocations(userLocations: [newLocation], coronaLocations: coronaLocations)
+    return !matchingLocations.isEmpty
   }
 }

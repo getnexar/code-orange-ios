@@ -6,10 +6,14 @@
 //  Copyright © 2020 Renen Elal. All rights reserved.
 //
 
-import Foundation
+import UIKit
 import CoreLocation
 
 class LocationService: NSObject {
+  private var locationsProvider: LocationsProvider? {
+    (UIApplication.shared.delegate as? AppDelegate)?.locationsProvider
+  }
+
   private let locationManager: CLLocationManager = {
     let locationManager = CLLocationManager()
     locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
@@ -48,11 +52,17 @@ extension LocationService: CLLocationManagerDelegate {
   func locationManager(_ manager: CLLocationManager,
                        didUpdateLocations locations: [CLLocation]){
 
-    if let newLocation = locations.last {
-      print("Location update \(Date())) - (\(newLocation.coordinate.latitude), \(newLocation.coordinate.longitude))")
+    guard let newLocation = locations.last else { return }
 
-      StorageService.shared.save(date: Date(), location: newLocation)
+    print("Location update \(Date())) - (\(newLocation.coordinate.latitude), \(newLocation.coordinate.longitude))")
+
+    let date = Date()
+
+    if locationsProvider?.doesCoronaLocationsContain(location: newLocation, date: date) ?? false {
+      print("Found infected locations at \(newLocation.coordinate.latitude), \(newLocation.coordinate.longitude)")
     }
+
+    StorageService.shared.save(date: Date(), location: newLocation)
   }
 
   func locationManager(_ manager: CLLocationManager,
