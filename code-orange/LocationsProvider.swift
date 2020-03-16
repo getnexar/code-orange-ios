@@ -43,8 +43,17 @@ class LocationsProvider {
   }
   
   private func getStoredUserLocations() -> [RecordedLocation]? {
-    // this is temp
-    let communicator = Communicator()
-    return communicator.getUserData()
+    let zones = StorageService.shared.getUserLocations()
+    var recordedLocations = [RecordedLocation]()
+
+    zones.forEach { zone in
+      let location = CoronaLocation(lat: zone.latitude, lon: zone.longitude)
+      // TODO: Validate the date
+      let date = zone.dateEnter ?? Date(timeIntervalSince1970: 0.0)
+      let recordedLocation = RecordedLocation(location: location, startTime: date, endTime: date)
+      recordedLocations.append(recordedLocation)
+    }
+
+    return recordedLocations
   }
 }

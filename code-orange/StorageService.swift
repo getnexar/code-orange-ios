@@ -67,4 +67,22 @@ extension StorageService {
       print("Could not save. \(error), \(error.userInfo)")
     }
   }
+
+  func getUserLocations() -> [Zone] {
+    let managedContext = persistentContainer.viewContext
+    let request: NSFetchRequest<Zone> = Zone.fetchRequest()
+
+    do {
+      let zones = try managedContext.fetch(request)
+      print("Found \(zones.count) user locations")
+
+      return zones
+    }  catch {
+      // TODO: Replace this implementation with code to handle the error appropriately.
+      let nserror = error as NSError
+      fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+    }
+
+    return []
+  }
 }
