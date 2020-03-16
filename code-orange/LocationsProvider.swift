@@ -36,10 +36,14 @@ class LocationsProvider {
   }
   
   private func getStoredCoronaLocations() -> [RecordedLocation]? {
-    return nil
+    // this is temp
+    let communicator = Communicator()
+    return communicator.getServerResults()
   }
   
   private func getStoredUserLocations() -> [RecordedLocation]? {
-    return nil
+    // this is temp
+    let communicator = Communicator()
+    return communicator.getUserData()
   }
 }
