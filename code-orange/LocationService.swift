@@ -50,6 +50,8 @@ extension LocationService: CLLocationManagerDelegate {
 
     if let newLocation = locations.last {
       print("Location update \(Date())) - (\(newLocation.coordinate.latitude), \(newLocation.coordinate.longitude))")
+
+      StorageService.shared.save(date: Date(), location: newLocation)
     }
   }
 
