@@ -33,8 +33,16 @@ class MainViewController: UIViewController {
     stackView.addArrangedSubview(separator)
     stackView.addArrangedSubview(subtitleStack)
     stackView.addArrangedSubview(timeScrollView)
+//    stackView.addArrangedSubview(changeStatusView)
     stackView.addArrangedSubview(mapView)
     return stackView
+  }()
+  
+  private lazy var changeStatusView: ChangeStatueQuestionView = {
+    let view = ChangeStatueQuestionView()
+    view.translatesAutoresizingMaskIntoConstraints = false
+    view.delegate = self
+    return view
   }()
   
   private lazy var titleStack: UIStackView = {
@@ -142,6 +150,9 @@ class MainViewController: UIViewController {
     super.viewDidLoad()
     view.addSubview(mainStack)
     mainStack.pin(to: view, anchors: [.leading(0), .trailing(0), .top(28), .bottom(0)])
+    // remove this
+    view.addSubview(changeStatusView)
+    changeStatusView.pin(to: view, anchors: [.bottom(0), .leading(0), .trailing(0)])
     getFreshLocations()
   }
   
@@ -175,7 +186,8 @@ class MainViewController: UIViewController {
   
   private func loadOtherLocations() {
     guard let locations = locations else { return }
-    locations.otherLocations.forEach {
+    
+    locations.otherLocations.suffix(100).forEach {
       let circleView = UIView()
       circleView.translatesAutoresizingMaskIntoConstraints = false
       circleView.backgroundColor = .purple
@@ -207,4 +219,17 @@ class MainViewController: UIViewController {
   @objc private func todayTapped() {
     print("today tapped")
   }
+}
+
+extension MainViewController: ChagneStatusViewDelegate {
+  func statusChanged(to: StatusOption) {
+    changeStatusView.removeFromSuperview()
+    // bring on the next screen
+  }
+  
+  func statusChangeDismissed() {
+    changeStatusView.removeFromSuperview()
+  }
+  
+  
 }
