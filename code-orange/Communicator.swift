@@ -17,7 +17,6 @@ class Communicator {
     
     guard let serverRecorededLocations = decode(data: data) else { return nil }
     let recordedLocations = serverRecorededLocations.compactMap { RecordedLocation(serverLocation: $0)}
-    print(recordedLocations)
     return recordedLocations
   }
   
@@ -30,7 +29,6 @@ class Communicator {
     
     guard let serverRecorededLocations = decode(data: data) else { return nil }
     let recordedLocations = serverRecorededLocations.compactMap { RecordedLocation(serverLocation: $0)}
-    print(recordedLocations)
     return recordedLocations
   }
   

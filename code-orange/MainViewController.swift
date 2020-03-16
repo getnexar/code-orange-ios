@@ -78,13 +78,13 @@ class MainViewController: UIViewController {
   private lazy var statusButton: UIButton = {
     let button = UIButton()
     button.setAutoLayoutHeight(60)
-    button.setTitle("Change Status", for: .normal)
+    button.setTitle("שנה סטטוס", for: .normal)
     button.titleLabel?.font = .systemFont(ofSize: 16, weight: .regular)
     button.setImage(UIImage(named: "outline"), for: .normal)
     button.setTitleColor(.nxGrey90, for: .normal)
     button.setTitleColor(.lightGray, for: .highlighted)
     button.tintColor = .nxGrey90
-    button.imageEdgeInsets = UIEdgeInsets(top: 0, left: -8, bottom: 0, right: 8)
+    button.imageEdgeInsets = getLocalizedInsets(top: 0, left: -8, bottom: 0, right: 8)
     button.addTarget(self, action: #selector(statusTapped), for: .touchUpInside)
     return button
   }()
@@ -98,7 +98,7 @@ class MainViewController: UIViewController {
     button.setTitleColor(.nxGrey90, for: .normal)
     button.setTitleColor(.lightGray, for: .highlighted)
     button.tintColor = .nxGrey90
-    button.imageEdgeInsets = UIEdgeInsets(top: 0, left: -8, bottom: 0, right: 8)
+    button.imageEdgeInsets = getLocalizedInsets(top: 0, left: -8, bottom: 0, right: 8)
     button.addTarget(self, action: #selector(callEmergencyServiceTapped), for: .touchUpInside)
     return button
   }()
@@ -106,13 +106,13 @@ class MainViewController: UIViewController {
   private lazy var monthButton: UIButton = {
     let button = UIButton()
     button.setAutoLayoutHeight(60)
-    button.setTitle("March 2020", for: .normal)
+    button.setTitle("מרץ 2020", for: .normal)
     button.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
     button.setImage(UIImage(named: "calendar"), for: .normal)
     button.setTitleColor(.nxGrey90, for: .normal)
     button.setTitleColor(.lightGray, for: .highlighted)
     button.tintColor = .nxGrey90
-    button.imageEdgeInsets = UIEdgeInsets(top: 0, left: -8, bottom: 0, right: 8)
+    button.imageEdgeInsets = getLocalizedInsets(top: 0, left: -8, bottom: 0, right: 8)
     button.addTarget(self, action: #selector(monthTapped), for: .touchUpInside)
     return button
   }()
@@ -120,13 +120,13 @@ class MainViewController: UIViewController {
   private lazy var todayButton: UIButton = {
     let button = UIButton()
     button.setAutoLayoutHeight(60)
-    button.setTitle("Today", for: .normal)
+    button.setTitle("היום", for: .normal)
     button.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
     button.setImage(UIImage(named: "refresh"), for: .normal)
     button.setTitleColor(.lightGray, for: .highlighted)
     button.setTitleColor(.nxPurple60, for: .normal)
     button.tintColor = .nxPurple60
-    button.imageEdgeInsets = UIEdgeInsets(top: 0, left: -8, bottom: 0, right: 8)
+    button.imageEdgeInsets = getLocalizedInsets(top: 0, left: -8, bottom: 0, right: 8)
     button.addTarget(self, action: #selector(todayTapped), for: .touchUpInside)
     return button
   }()
@@ -143,6 +143,17 @@ class MainViewController: UIViewController {
     view.addSubview(mainStack)
     mainStack.pin(to: view, anchors: [.leading(0), .trailing(0), .top(28), .bottom(0)])
     getFreshLocations()
+  }
+  
+  private func getLocalizedInsets(top: CGFloat, left: CGFloat, bottom: CGFloat, right: CGFloat) -> UIEdgeInsets {
+    let insets: UIEdgeInsets
+    if UIView.userInterfaceLayoutDirection(for: self.view.semanticContentAttribute) == .rightToLeft {
+      insets = UIEdgeInsets(top: top, left: right, bottom: bottom, right: left)
+    } else {
+      insets = UIEdgeInsets(top: top, left: left, bottom: bottom, right: right)
+    }
+    
+    return insets
   }
   
   private func getFreshLocations() {
@@ -175,7 +186,8 @@ class MainViewController: UIViewController {
   
   private func loadOtherLocations() {
     guard let locations = locations else { return }
-    locations.otherLocations.forEach {
+    
+    locations.otherLocations.suffix(100).forEach {
       let circleView = UIView()
       circleView.translatesAutoresizingMaskIntoConstraints = false
       circleView.backgroundColor = .nxPurple60
@@ -194,6 +206,7 @@ class MainViewController: UIViewController {
   
   @objc private func statusTapped() {
     print("status tapped")
+    displayChangeStatusView()
   }
   
   @objc private func callEmergencyServiceTapped() {
@@ -206,5 +219,36 @@ class MainViewController: UIViewController {
   
   @objc private func todayTapped() {
     print("today tapped")
+  }
+  
+  private var drawerView: DrawerView?
+  private func displayChangeStatusView() {
+    guard drawerView == nil else { return }
+    let changeStatusView = ChangeStatueView()
+    changeStatusView.delegate = self
+    changeStatusView.translatesAutoresizingMaskIntoConstraints = false
+    let drawerView = DrawerView()
+    drawerView.contentView = changeStatusView
+    self.view.addSubview(drawerView)
+    drawerView.translatesAutoresizingMaskIntoConstraints = false
+    drawerView.pinToSuperview(anchors: [.leading(0), .trailing(0), .bottom(-24)])
+    
+    self.drawerView = drawerView
+    UIView.animate(withDuration: 0.4) {
+      self.drawerView?.show()
+    }
+  }
+}
+
+extension MainViewController: ChagneStatusViewDelegate {
+  func statusChanged(to: StatusOption) {
+    drawerView?.removeFromSuperview()
+    drawerView = nil
+    // bring on the next screen
+  }
+  
+  func statusChangeDismissed() {
+    self.drawerView?.removeFromSuperview()
+    drawerView = nil
   }
 }

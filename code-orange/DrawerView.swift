@@ -46,7 +46,7 @@ class DrawerView: UIView {
   private func commonInit() {
     layer.masksToBounds = true
     layer.cornerRadius = 24
-    backgroundColor = .blue
+    backgroundColor = .white
     alpha = 0 // TODO: use hiding constraint
   }
   
