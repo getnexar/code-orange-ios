@@ -8,33 +8,38 @@
 
 import Foundation
 
+struct Locations {
+  var matchedLocations: [RecordedLocation]
+  var otherLocations: [RecordedLocation]
+}
+
 class LocationsProvider {
   
-  /*
-   * returns two arrays:
-   *   1. corona locations that do not match any user location
-   *   2. user locations that were matched with corona locations
-   */
-  public static func getLocations() -> ([RecordedLocation], [RecordedLocation]) {
+  private let locationMatcher: LocationMatcher
+  
+  init(locationMatcher: LocationMatcher) {
+    self.locationMatcher = locationMatcher
+  }
+
+  public func getLocations() -> Locations {
     guard let coronaLocations = getStoredCoronaLocations() else {
-      return ([RecordedLocation](), [RecordedLocation]())
+      return Locations(matchedLocations: [], otherLocations: [])
     }
     
     guard let userLocations = getStoredUserLocations() else {
-      return (coronaLocations, [RecordedLocation]())
+      return Locations(matchedLocations: [], otherLocations: coronaLocations)
     }
     
-    let matchingLocations = LocationMatcher.getMatchedLocations(of: coronaLocations, and: userLocations)
-    let coronaNotMatchingLocations = coronaLocations.filter({ matchingLocations.contains($0) })
-    
-    return (coronaNotMatchingLocations, matchingLocations)
+    let matchingLocations = locationMatcher.matchLocations(of: coronaLocations, and: userLocations)
+    let coronaNotMatchingLocations = coronaLocations.filter { !matchingLocations.contains($0) }
+    return Locations(matchedLocations: matchingLocations, otherLocations: coronaNotMatchingLocations)
   }
   
-  private static func getStoredCoronaLocations() -> [RecordedLocation]? {
+  private func getStoredCoronaLocations() -> [RecordedLocation]? {
     return nil
   }
   
-  private static func getStoredUserLocations() -> [RecordedLocation]? {
+  private func getStoredUserLocations() -> [RecordedLocation]? {
     return nil
   }
 }

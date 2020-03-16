@@ -9,18 +9,22 @@ import Foundation
 
 class LocationMatcher {
   
-  static let mathcingDistanceThresholdInMeter = 30.0
-  static let matchingTimeThresholdInMins = 30.0
-  static let matchingTimeThresholdInSecs = LocationMatcher.matchingTimeThresholdInMins * 60
+  let matchingDistanceThresholdInMeters: Double
+  let matchingTimeThreshold: TimeInterval
   
-  // return value: an array of the user locations matching. empty array if there are no matches
-  static func getMatchedLocations(of userLocations: [RecordedLocation],
-                                  and coronaLocations: [RecordedLocation]) -> [RecordedLocation] {
+  init(matchingTimeThreshold: TimeInterval, mathcingDistanceThresholdInMeters: Double) {
+    self.matchingDistanceThresholdInMeters = mathcingDistanceThresholdInMeters
+    self.matchingTimeThreshold = matchingTimeThreshold
+  }
+  
+  func matchLocations(of userLocations: [RecordedLocation],
+                      and coronaLocations: [RecordedLocation]) -> [RecordedLocation] {
     var matchingLocations = [RecordedLocation]()
     userLocations.forEach { userLocation in
       coronaLocations.forEach { coronaLocation in
-        if userLocation.isTimeColliding(with: coronaLocation, collisionThresholdInSecs: Self.matchingTimeThresholdInSecs),
-          userLocation.isLocationColliding(with: coronaLocation, collisionThresholdInMeters: Self.mathcingDistanceThresholdInMeter) {
+        if userLocation.isTimeColliding(with: coronaLocation, collisionThresholdInSecs: matchingTimeThreshold
+          ),
+          userLocation.isLocationColliding(with: coronaLocation, collisionThresholdInMeters: matchingDistanceThresholdInMeters) {
           matchingLocations.append(userLocation)
         }
       }
@@ -29,3 +33,4 @@ class LocationMatcher {
     return matchingLocations
   }
 }
+
