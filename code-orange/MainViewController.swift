@@ -81,9 +81,9 @@ class MainViewController: UIViewController {
     button.setTitle("Change Status", for: .normal)
     button.titleLabel?.font = .systemFont(ofSize: 16, weight: .regular)
     button.setImage(UIImage(named: "outline"), for: .normal)
-    button.setTitleColor(.black, for: .normal)
+    button.setTitleColor(.nxGrey90, for: .normal)
     button.setTitleColor(.lightGray, for: .highlighted)
-    button.tintColor = .black
+    button.tintColor = .nxGrey90
     button.imageEdgeInsets = UIEdgeInsets(top: 0, left: -8, bottom: 0, right: 8)
     button.addTarget(self, action: #selector(statusTapped), for: .touchUpInside)
     return button
@@ -95,9 +95,9 @@ class MainViewController: UIViewController {
     button.setTitle("101", for: .normal)
     button.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
     button.setImage(UIImage(named: "phoneIcon"), for: .normal)
-    button.setTitleColor(.black, for: .normal)
+    button.setTitleColor(.nxGrey90, for: .normal)
     button.setTitleColor(.lightGray, for: .highlighted)
-    button.tintColor = .black
+    button.tintColor = .nxGrey90
     button.imageEdgeInsets = UIEdgeInsets(top: 0, left: -8, bottom: 0, right: 8)
     button.addTarget(self, action: #selector(callEmergencyServiceTapped), for: .touchUpInside)
     return button
@@ -109,9 +109,9 @@ class MainViewController: UIViewController {
     button.setTitle("March 2020", for: .normal)
     button.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
     button.setImage(UIImage(named: "calendar"), for: .normal)
-    button.setTitleColor(.black, for: .normal)
+    button.setTitleColor(.nxGrey90, for: .normal)
     button.setTitleColor(.lightGray, for: .highlighted)
-    button.tintColor = .black
+    button.tintColor = .nxGrey90
     button.imageEdgeInsets = UIEdgeInsets(top: 0, left: -8, bottom: 0, right: 8)
     button.addTarget(self, action: #selector(monthTapped), for: .touchUpInside)
     return button
@@ -124,8 +124,8 @@ class MainViewController: UIViewController {
     button.titleLabel?.font = .systemFont(ofSize: 16, weight: .bold)
     button.setImage(UIImage(named: "refresh"), for: .normal)
     button.setTitleColor(.lightGray, for: .highlighted)
-    button.setTitleColor(.purple, for: .normal)
-    button.tintColor = .purple
+    button.setTitleColor(.nxPurple60, for: .normal)
+    button.tintColor = .nxPurple60
     button.imageEdgeInsets = UIEdgeInsets(top: 0, left: -8, bottom: 0, right: 8)
     button.addTarget(self, action: #selector(todayTapped), for: .touchUpInside)
     return button
@@ -133,7 +133,7 @@ class MainViewController: UIViewController {
   
   private lazy var separator: UIView = {
     let view = UIView()
-    view.backgroundColor = .lightGray
+    view.backgroundColor = .nxGrey30
     view.setAutoLayoutHeight(1)
     return view
   }()
@@ -161,7 +161,7 @@ class MainViewController: UIViewController {
     locations.matchedLocations.forEach {
       let marker = GMSMarker()
       let imageView = UIImageView(image: UIImage(named: "mapAnnotation"))
-      imageView.tintColor = .orange
+      imageView.tintColor = .nxOrange
       marker.iconView = imageView
       marker.position = CLLocationCoordinate2D(latitude: $0.location.lat, longitude: $0.location.lon)
       marker.map = mapView
@@ -174,7 +174,7 @@ class MainViewController: UIViewController {
     locations.otherLocations.forEach {
       let circleView = UIView()
       circleView.translatesAutoresizingMaskIntoConstraints = false
-      circleView.backgroundColor = .purple
+      circleView.backgroundColor = .nxPurple60
       circleView.alpha = 0.4
       circleView.setAutoLayoutWidth(30)
       circleView.setSquareRatio()
