@@ -29,6 +29,7 @@
 		77AA054A241EB904002EC3DF /* CurrentLocationProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77AA0549241EB904002EC3DF /* CurrentLocationProvider.swift */; };
 		77E55859241FC95300FFA45B /* VisitedLocationPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77E55858241FC95300FFA45B /* VisitedLocationPanel.swift */; };
 		D2398E23241F3BBD009EE4A1 /* LocationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2398E22241F3BBD009EE4A1 /* LocationService.swift */; };
+		D25B8CAC241F637500C6DCB8 /* TLV-Test-Ride-Intinerary.gpx in Resources */ = {isa = PBXBuildFile; fileRef = D25B8CAB241F637500C6DCB8 /* TLV-Test-Ride-Intinerary.gpx */; };
 		DAEE11DFC0C433E44F174B2F /* Pods_code_orangeTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D05ABFE5D0AAECB7FA466E9 /* Pods_code_orangeTests.framework */; };
 		EBC2BDDE74924428CC46DD47 /* Pods_code_orange.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DA767D39FD6802378DBB90C6 /* Pods_code_orange.framework */; };
 /* End PBXBuildFile section */
@@ -77,6 +78,7 @@
 		77E55858241FC95300FFA45B /* VisitedLocationPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisitedLocationPanel.swift; sourceTree = "<group>"; };
 		B2526FADFC6649CE407724FA /* Pods-code-orangeTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-code-orangeTests.release.xcconfig"; path = "Target Support Files/Pods-code-orangeTests/Pods-code-orangeTests.release.xcconfig"; sourceTree = "<group>"; };
 		D2398E22241F3BBD009EE4A1 /* LocationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationService.swift; sourceTree = "<group>"; };
+		D25B8CAB241F637500C6DCB8 /* TLV-Test-Ride-Intinerary.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "TLV-Test-Ride-Intinerary.gpx"; sourceTree = "<group>"; };
 		DA767D39FD6802378DBB90C6 /* Pods_code_orange.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_code_orange.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -154,6 +156,7 @@
 				233B0F53241FA01300F776CC /* ChangeStatusView.swift */,
 				233B0F55241FA3CE00F776CC /* Buttons.swift */,
 				D2398E22241F3BBD009EE4A1 /* LocationService.swift */,
+				D25B8CAB241F637500C6DCB8 /* TLV-Test-Ride-Intinerary.gpx */,
 			);
 			path = "code-orange";
 			sourceTree = "<group>";
@@ -266,6 +269,7 @@
 				7789EA7E241E532400BC92E4 /* LaunchScreen.storyboard in Resources */,
 				7789EA7B241E532400BC92E4 /* Assets.xcassets in Resources */,
 				7789EA76241E532400BC92E4 /* Main.storyboard in Resources */,
+				D25B8CAC241F637500C6DCB8 /* TLV-Test-Ride-Intinerary.gpx in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
