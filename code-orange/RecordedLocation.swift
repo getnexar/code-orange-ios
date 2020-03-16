@@ -21,20 +21,13 @@ struct ServerRecordedLocation: Equatable, Codable {
   init(lat: CLLocationDegrees,
        lon: CLLocationDegrees,
        startTime: String,
-       endTime: String) {
+       endTime: String,
+       radius: Int) {
     self.lat = lat
     self.lon = lon
     self.startTime = startTime
     self.endTime = endTime
     self.radius = RADIUS_CONST
-  }
-  
-  private enum CodingKeys: String, CodingKey {
-    case startTime = "start_time"
-    case endTime = "end_time"
-    case lat = "lat"
-    case lon = "lon"
-    case radius = "radius"
   }
 }
 
@@ -45,13 +38,13 @@ struct RecordedLocation: Equatable, Codable {
   
   init?(serverLocation: ServerRecordedLocation) {
     self.location = CoronaLocation(lat: serverLocation.lat, lon: serverLocation.lon)
-    guard let existingStartTime = dataFormatter.date(from: serverLocation.startTime),
-      let existingEndTime = dataFormatter.date(from: serverLocation.endTime) else {
+    guard let startTime = dataFormatter.date(from: serverLocation.startTime),
+      let endTime = dataFormatter.date(from: serverLocation.endTime) else {
         return nil
     }
     
-    self.startTime = existingStartTime
-    self.endTime = existingEndTime
+    self.startTime = startTime
+    self.endTime = endTime
   }
   
   func isLocationColliding(with otherRecordedLocation: RecordedLocation,
