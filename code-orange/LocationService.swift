@@ -21,12 +21,26 @@ class LocationService: NSObject {
 
   public static let shared = LocationService()
 
+  public var isUpdatingLocation = false
+
   public func startUpdatingLocation() {
+    guard CLLocationManager.locationServicesEnabled(), !isUpdatingLocation else { return }
+
     locationManager.requestAlwaysAuthorization()
     locationManager.startUpdatingLocation()
     locationManager.allowsBackgroundLocationUpdates = true
     locationManager.pausesLocationUpdatesAutomatically = false
     locationManager.delegate = self
+    isUpdatingLocation = true
+    print("Start updating location")
+  }
+
+  public func stopUpdatingLocation() {
+    guard isUpdatingLocation else { return }
+
+    locationManager.stopUpdatingLocation()
+    isUpdatingLocation = false
+    print("Stop updating location")
   }
 }
 
@@ -35,7 +49,18 @@ extension LocationService: CLLocationManagerDelegate {
                        didUpdateLocations locations: [CLLocation]){
 
     if let newLocation = locations.last {
-      print("\(Date())) - (\(newLocation.coordinate.latitude), \(newLocation.coordinate.longitude))")
+      print("Location update \(Date())) - (\(newLocation.coordinate.latitude), \(newLocation.coordinate.longitude))")
+    }
+  }
+
+  func locationManager(_ manager: CLLocationManager,
+                       didChangeAuthorization status: CLAuthorizationStatus) {
+    if status == .authorizedAlways || status == .authorizedWhenInUse {
+      print("Permissions OK")
+      startUpdatingLocation()
+    } else {
+      print("Permissions KO")
+      stopUpdatingLocation()
     }
   }
 

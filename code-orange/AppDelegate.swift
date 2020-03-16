@@ -33,7 +33,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 //
 //    }
 
-    locationService.startUpdatingLocation()
+    if !locationService.isUpdatingLocation {
+      locationService.startUpdatingLocation()
+    }
+
     return true
   }
 
