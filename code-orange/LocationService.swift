@@ -60,6 +60,7 @@ extension LocationService: CLLocationManagerDelegate {
 
     if locationsProvider?.doesCoronaLocationsContain(location: newLocation, date: date) ?? false {
       print("Found infected locations at \(newLocation.coordinate.latitude), \(newLocation.coordinate.longitude)")
+      InfectionNotifier.notifyUser()
     }
 
     StorageService.shared.save(date: Date(), location: newLocation)

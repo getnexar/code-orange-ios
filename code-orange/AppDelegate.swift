@@ -27,6 +27,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
     GMSServices.provideAPIKey("AIzaSyB57-_ZDUWdRSUi9ladkLO91d8wTlzpC8w")
 
+    UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { granted, error in
+      if let error = error {
+          print("User Notification authorization request failed with error: ", error)
+      }
+    }
+    UIApplication.shared.applicationIconBadgeNumber = 0
+
 //    if let launchOptions = launchOptions,
 //      let isLocationKey = launchOptions[UIApplication.LaunchOptionsKey.location] as? Bool,
 //      isLocationKey {
