@@ -12,15 +12,17 @@ import UIKit
 protocol VisitedLocationsPanelDelegate: class {
   func visitedLocationsPanelCallEmergency()
   func visitedLocationsPanelOpenHealthAdministrationWebsite()
+  func visitedLocationsDidSelectLocation(_ location: RecordedLocation)
 }
 
 class VisitedLocationsPanel: UIView {
   
   public weak var delegate: VisitedLocationsPanelDelegate?
-  
+  private var currentLocationIndex = 0
   private var locations: [RecordedLocation]
 
-  init(locations: [RecordedLocation]) {
+  init?(locations: [RecordedLocation]) {
+    guard !locations.isEmpty else { return nil }
     self.locations = locations
     super.init(frame: .zero)
     commonInit()
@@ -33,6 +35,7 @@ class VisitedLocationsPanel: UIView {
   private func commonInit() {
     addSubview(mainStackView)
     mainStackView.fillSuperview()
+    reloadData()
   }
   
   private lazy var mainStackView: UIStackView = {
@@ -40,11 +43,9 @@ class VisitedLocationsPanel: UIView {
     stackView.translatesAutoresizingMaskIntoConstraints = false
     stackView.axis = .vertical
     stackView.spacing = 16
-    stackView.isLayoutMarginsRelativeArrangement = true
-    stackView.layoutMargins = UIEdgeInsets(top: 0, left: 24, bottom: 24, right: 24)
-    stackView.addArrangedSubview(titleAndButtonsStackView)
-    stackView.addArrangedSubview(topLabel)
-    stackView.addArrangedSubview(bottomLabel)
+    stackView.addArrangedSubview(titleAndButtonsStackViewContainer)
+    stackView.addArrangedSubview(topLabelStack)
+    stackView.addArrangedSubview(bottomLabelStack)
     stackView.addArrangedSubview(actionsStackView)
     return stackView
   }()
@@ -60,16 +61,23 @@ class VisitedLocationsPanel: UIView {
     return stackView
   }()
 
-  private lazy var titleAndButtonsStackView: UIStackView = {
+  private lazy var titleAndButtonsStackViewContainer: UIView = {
     let stackView = UIStackView()
     stackView.backgroundColor = .nxGrey10
     stackView.axis = .horizontal
     stackView.spacing = 2
     stackView.alignment = .center
+    stackView.isLayoutMarginsRelativeArrangement = true
+    stackView.layoutMargins = UIEdgeInsets(top: 12, left: 16, bottom: 16, right: 16)
     stackView.addArrangedSubview(leftPageButton)
     stackView.addArrangedSubview(titleStackView)
     stackView.addArrangedSubview(rightPageButton)
-    return stackView
+    let view = UIView()
+    view.backgroundColor = .nxGrey10
+    view.addSubview(stackView)
+    stackView.translatesAutoresizingMaskIntoConstraints = false
+    stackView.fillSuperview()
+    return view
   }()
 
   private lazy var actionsStackView: UIStackView = {
@@ -78,6 +86,8 @@ class VisitedLocationsPanel: UIView {
     stackView.distribution = .fillEqually
     stackView.spacing = 24
     stackView.alignment = .center
+    stackView.isLayoutMarginsRelativeArrangement = true
+    stackView.layoutMargins = UIEdgeInsets(top: 12, left: 24, bottom: 24, right: 24)
     stackView.addArrangedSubview(healthAdministrationWebsiteButton)
     stackView.addArrangedSubview(callEmergencyServiceButton)
     return stackView
@@ -99,26 +109,29 @@ class VisitedLocationsPanel: UIView {
 
   private lazy var pagesLabel: UILabel = {
     let label = UILabel()
-    label.text = "1/2"
     label.font = UIFont.systemFont(ofSize: 16)
     return label
   }()
 
   private lazy var addressLabel: UILabel = {
     let label = UILabel()
-    label.text = "שדרות בן גוריון 22, תל אביב"
     label.font = UIFont.boldSystemFont(ofSize: 16)
     return label
+  }()
+  
+  private lazy var timeFormatter: DateFormatter = {
+    let dateFormater = DateFormatter()
+    dateFormater.dateFormat = "HH:MM"
+    return dateFormater
   }()
 
   private lazy var timeframeLabel: UILabel = {
     let label = UILabel()
-    label.text = "10:15 - 10:30"
     label.font = UIFont.systemFont(ofSize: 14)
     return label
   }()
 
-  private lazy var topLabel: UILabel = {
+  private lazy var topLabelStack: UIStackView = {
     let paragraphStyle = NSMutableParagraphStyle()
     paragraphStyle.alignment = .justified
     paragraphStyle.baseWritingDirection = .rightToLeft
@@ -127,11 +140,10 @@ class VisitedLocationsPanel: UIView {
     let label = UILabel()
     label.attributedText = attributedText
     label.numberOfLines = 0
-    //label.textAlignment = .natural
-    return label
+    return HorizontalPaddingStackView(around: label)
   }()
 
-  private lazy var bottomLabel: UILabel = {
+  private lazy var bottomLabelStack: UIStackView = {
     let paragraphStyle = NSMutableParagraphStyle()
     paragraphStyle.alignment = .justified
     paragraphStyle.baseWritingDirection = .rightToLeft
@@ -140,8 +152,7 @@ class VisitedLocationsPanel: UIView {
     let label = UILabel()
     label.attributedText = attributedText
     label.numberOfLines = 0
-    //label.textAlignment = .natural
-    return label
+    return HorizontalPaddingStackView(around: label)
   }()
 
   private lazy var healthAdministrationWebsiteButton: UIButton = {
@@ -173,10 +184,50 @@ class VisitedLocationsPanel: UIView {
   }
   
   @objc private func previousLocationTapped() {
-    print("previous location tapped")
+    currentLocationIndex -= 1
+    if currentLocationIndex < 0 {
+      currentLocationIndex = locations.count - 1
+    }
+    delegate?.visitedLocationsDidSelectLocation(locations[currentLocationIndex])
+    reloadData()
   }
 
   @objc private func nextLocationPickedTapped() {
-    print("next location tapped")
+    currentLocationIndex += 1
+    if currentLocationIndex >= locations.count {
+      currentLocationIndex = 0
+    }
+    delegate?.visitedLocationsDidSelectLocation(locations[currentLocationIndex])
+    reloadData()
+  }
+  
+  private func reloadData() {
+    let hasSingleLocation = locations.count < 2
+    let currentLocation = locations[currentLocationIndex]
+    let startTime = timeFormatter.string(from: currentLocation.startTime)
+    let endTime = timeFormatter.string(from: currentLocation.startTime)
+    timeframeLabel.text = "\(startTime) - \(endTime)"
+    pagesLabel.text = "\(currentLocationIndex + 1)/\(locations.count)"
+    leftPageButton.isHidden = hasSingleLocation
+    rightPageButton.isHidden = hasSingleLocation
+    pagesLabel.isHidden = hasSingleLocation
+    addressLabel.text = currentLocation.address
+  }
+}
+
+private class HorizontalPaddingStackView: UIStackView {
+  init(around view: UIView) {
+    super.init(frame: .zero)
+    let padding = UIView()
+    padding.setAutoLayoutWidth(24)
+    let padding2 = UIView()
+    padding2.setAutoLayoutWidth(24)
+    axis = .horizontal
+    addArrangedSubview(padding)
+    addArrangedSubview(view)
+    addArrangedSubview(padding2)
+  }
+  required init(coder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
   }
 }

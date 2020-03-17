@@ -35,6 +35,7 @@ struct RecordedLocation: Equatable, Codable {
   var location: CoronaLocation
   var startTime: Date
   var endTime: Date
+  var address: String?
   
   init?(serverLocation: ServerRecordedLocation) {
     self.location = CoronaLocation(lat: serverLocation.lat, lon: serverLocation.lon)

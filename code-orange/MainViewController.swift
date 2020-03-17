@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CoreLocation
 import GoogleMaps
 
 class MainViewController: UIViewController {
@@ -34,6 +35,10 @@ class MainViewController: UIViewController {
     stackView.addArrangedSubview(subtitleStack)
     stackView.addArrangedSubview(timeScrollView)
     stackView.addArrangedSubview(mapView)
+    stackView.addArrangedSubview(drawerView)
+    if #available(iOS 11.0, *) {
+      stackView.setCustomSpacing(-drawerView.layer.cornerRadius, after: mapView)
+    }
     return stackView
   }()
   
@@ -42,7 +47,7 @@ class MainViewController: UIViewController {
     stackView.spacing = 12
     stackView.axis = .horizontal
     stackView.isLayoutMarginsRelativeArrangement = true
-    stackView.layoutMargins = UIEdgeInsets(top: 0, left: 24, bottom: 0, right: 24)
+    stackView.layoutMargins = UIEdgeInsets(top: 0, left: 24, bottom: 24, right: 24)
     stackView.addArrangedSubview(statusButton)
     stackView.addArrangedSubview(UIView())
     stackView.addArrangedSubview(callEmergencyButton)
@@ -137,11 +142,21 @@ class MainViewController: UIViewController {
     view.setAutoLayoutHeight(1)
     return view
   }()
+
+  private lazy var drawerView: DrawerView = {
+    let drawerView = DrawerView()
+    drawerView.translatesAutoresizingMaskIntoConstraints = false
+    return drawerView
+  }()
   
   override func viewDidLoad() {
     super.viewDidLoad()
     view.addSubview(mainStack)
-    mainStack.pin(to: view, anchors: [.leading(0), .trailing(0), .top(28), .bottom(0)])
+    mainStack.pin(to: view, anchors: [.leading(0), .trailing(0), .top(28), .bottom(-24)])
+  }
+  
+  override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
     getFreshLocations()
   }
   
@@ -223,47 +238,29 @@ class MainViewController: UIViewController {
     print("today tapped")
   }
   
-  private var drawerView: DrawerView?
   private func displayChangeStatusView() {
-    guard drawerView == nil else { return }
     let changeStatusView = ChangeStatueView()
     changeStatusView.delegate = self
     changeStatusView.translatesAutoresizingMaskIntoConstraints = false
-    let drawerView = DrawerView()
     drawerView.contentView = changeStatusView
-    self.view.addSubview(drawerView)
-    drawerView.translatesAutoresizingMaskIntoConstraints = false
-    drawerView.pinToSuperview(anchors: [.leading(0), .trailing(0), .bottom(-24)])
-    
-    self.drawerView = drawerView
     UIView.animate(withDuration: 0.4) {
-      self.drawerView?.show()
+      self.drawerView.isHidden = false
     }
   }
   
   private func displayMatchedLocationsPanel(_ matchedLocations: [RecordedLocation]) {
-    guard drawerView == nil else { return }
-    let visitedLocationsPanel = VisitedLocationsPanel(locations: matchedLocations)
+    guard let visitedLocationsPanel = VisitedLocationsPanel(locations: matchedLocations) else { return }
     visitedLocationsPanel.delegate = self
     visitedLocationsPanel.translatesAutoresizingMaskIntoConstraints = false
-    let drawerView = DrawerView()
     drawerView.contentView = visitedLocationsPanel
-    self.view.addSubview(drawerView)
-    drawerView.translatesAutoresizingMaskIntoConstraints = false
-    drawerView.pinToSuperview(anchors: [.leading(0), .trailing(0), .bottom(-24)])
-    
-    self.drawerView = drawerView
     UIView.animate(withDuration: 0.4) {
-      self.drawerView?.show()
+      self.drawerView.isHidden = false
     }
   }
   
   private func dismissDrawer() {
-    UIView.animate(withDuration: 0.4, animations: {
-      self.drawerView?.hide()
-    }) { _ in
-      self.drawerView?.removeFromSuperview()
-      self.drawerView = nil
+    UIView.animate(withDuration: 0.4) {
+      self.drawerView.isHidden = true
     }
   }
 }
@@ -280,6 +277,12 @@ extension MainViewController: ChagneStatusViewDelegate {
 }
 
 extension MainViewController: VisitedLocationsPanelDelegate {
+  func visitedLocationsDidSelectLocation(_ location: RecordedLocation) {
+    let coordinate = CLLocationCoordinate2D(latitude: location.location.lat, longitude: location.location.lon)
+    let cameraUpdate = GMSCameraUpdate.setTarget(coordinate, zoom: 16)
+    mapView.animate(with: cameraUpdate)
+  }
+  
   func visitedLocationsPanelCallEmergency() {
     dismissDrawer()
   }
