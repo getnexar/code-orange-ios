@@ -158,7 +158,7 @@ class VisitedLocationsPanel: UIView {
   private lazy var healthAdministrationWebsiteButton: UIButton = {
     let button = UIButton()
     button.backgroundColor = .nxOrange
-    button.setTitleColor(.black, for: .normal)
+    button.setTitleColor(.nxGrey90, for: .normal)
     button.setTitle("אתר משרד הבריאות", for: .normal)
     button.titleLabel?.font = UIFont.systemFont(ofSize: 14)
     button.addTarget(self, action: #selector(healthAdministrationWebsiteButtonTapped), for: .touchUpInside)
@@ -168,7 +168,7 @@ class VisitedLocationsPanel: UIView {
   private lazy var callEmergencyServiceButton: UIButton = {
     let button = UIButton()
     button.backgroundColor = .nxOrange
-    button.setTitleColor(.black, for: .normal)
+    button.setTitleColor(.nxGrey90, for: .normal)
     button.setTitle("התקשר 101", for: .normal)
     button.titleLabel?.font = UIFont.systemFont(ofSize: 14)
     button.addTarget(self, action: #selector(callEmergencyServiceButtonTapped), for: .touchUpInside)
