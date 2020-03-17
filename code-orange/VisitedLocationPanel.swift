@@ -12,16 +12,16 @@ import UIKit
 protocol VisitedLocationsPanelDelegate: class {
   func visitedLocationsPanelCallEmergency()
   func visitedLocationsPanelOpenHealthAdministrationWebsite()
-  func visitedLocationsDidSelectLocation(_ location: RecordedLocation)
+  func visitedLocationsDidSelectLocation(_ location: MatchedLocation)
 }
 
 class VisitedLocationsPanel: UIView {
   
   public weak var delegate: VisitedLocationsPanelDelegate?
   private var currentLocationIndex = 0
-  private var locations: [RecordedLocation]
+  private var locations: [MatchedLocation]
 
-  init?(locations: [RecordedLocation]) {
+  init?(locations: [MatchedLocation]) {
     guard !locations.isEmpty else { return nil }
     self.locations = locations
     super.init(frame: .zero)
@@ -204,14 +204,14 @@ class VisitedLocationsPanel: UIView {
   private func reloadData() {
     let hasSingleLocation = locations.count < 2
     let currentLocation = locations[currentLocationIndex]
-    let startTime = timeFormatter.string(from: currentLocation.startTime)
-    let endTime = timeFormatter.string(from: currentLocation.startTime)
+    let startTime = timeFormatter.string(from: currentLocation.userLocation.startTime)
+    let endTime = timeFormatter.string(from: currentLocation.userLocation.endTime)
     timeframeLabel.text = "\(startTime) - \(endTime)"
     pagesLabel.text = "\(currentLocationIndex + 1)/\(locations.count)"
     leftPageButton.isHidden = hasSingleLocation
     rightPageButton.isHidden = hasSingleLocation
     pagesLabel.isHidden = hasSingleLocation
-    addressLabel.text = currentLocation.address
+    addressLabel.text = currentLocation.infectedLocation.address ?? currentLocation.userLocation.address
   }
 }
 

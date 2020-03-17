@@ -9,7 +9,7 @@
 import Foundation
 
 struct Locations {
-  var matchedLocations: [RecordedLocation]
+  var matchedLocations: [MatchedLocation]
   var otherLocations: [RecordedLocation]
 }
 
@@ -30,8 +30,9 @@ class LocationsProvider {
       return Locations(matchedLocations: [], otherLocations: coronaLocations)
     }
     
-    let matchingLocations = locationMatcher.matchLocations(of: coronaLocations, and: userLocations)
-    let coronaNotMatchingLocations = coronaLocations.filter { !matchingLocations.contains($0) }
+    let matchingLocations = locationMatcher.matchLocations(userLocations: userLocations, coronaLocations: coronaLocations)
+    let infectedMatchedLocations = matchingLocations.compactMap { $0.infectedLocation }
+    let coronaNotMatchingLocations = coronaLocations.filter { !infectedMatchedLocations.contains($0) }
     return Locations(matchedLocations: matchingLocations, otherLocations: coronaNotMatchingLocations)
   }
   
