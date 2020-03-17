@@ -7,9 +7,16 @@
 //
 
 import UIKit
+import CoreLocation
 import GoogleMaps
 
 class MainViewController: UIViewController {
+  
+  enum DrawerContent {
+    case none
+    case changeStatusView
+    case visitedLocationsPanel
+  }
   
   public weak var currentLocationProvider: CurrentLocationProvider?
   private var locationsProvider: LocationsProvider? {
@@ -25,6 +32,23 @@ class MainViewController: UIViewController {
   private static let initialZoomLevel: Float = 9
   private static let defaultLocation = CLLocationCoordinate2D(latitude: 32.086801, longitude: 34.789749)
   private var shareLocationView : ShareLocationView?
+  
+  private var drawerContent: DrawerContent = .none {
+    didSet {
+      switch drawerContent {
+      case .none: // dismiss drawer
+        dismissDrawer()
+      case .changeStatusView:
+        dismissDrawer() {
+          self.displayChangeStatusView()
+        }
+      case .visitedLocationsPanel:
+        dismissDrawer() {
+          self.displayMatchedLocationsPanel(self.locations?.matchedLocations ?? [])
+        }
+      }
+    }
+  }
 
   private lazy var mainStack: UIStackView = {
     let stackView = UIStackView()
@@ -35,6 +59,10 @@ class MainViewController: UIViewController {
     stackView.addArrangedSubview(subtitleStack)
     stackView.addArrangedSubview(timeScrollView)
     stackView.addArrangedSubview(mapView)
+    stackView.addArrangedSubview(drawerView)
+    if #available(iOS 11.0, *) {
+      stackView.setCustomSpacing(-drawerView.layer.cornerRadius, after: mapView)
+    }
     return stackView
   }()
   
@@ -43,7 +71,7 @@ class MainViewController: UIViewController {
     stackView.spacing = 12
     stackView.axis = .horizontal
     stackView.isLayoutMarginsRelativeArrangement = true
-    stackView.layoutMargins = UIEdgeInsets(top: 0, left: 24, bottom: 0, right: 24)
+    stackView.layoutMargins = UIEdgeInsets(top: 0, left: 24, bottom: 24, right: 24)
     stackView.addArrangedSubview(statusButton)
     stackView.addArrangedSubview(UIView())
     stackView.addArrangedSubview(callEmergencyButton)
@@ -138,11 +166,22 @@ class MainViewController: UIViewController {
     view.setAutoLayoutHeight(1)
     return view
   }()
+
+  private lazy var drawerView: DrawerView = {
+    let drawerView = DrawerView()
+    drawerView.translatesAutoresizingMaskIntoConstraints = false
+    drawerView.isHidden = true
+    return drawerView
+  }()
   
   override func viewDidLoad() {
     super.viewDidLoad()
     view.addSubview(mainStack)
-    mainStack.pin(to: view, anchors: [.leading(0), .trailing(0), .top(28), .bottom(0)])
+    mainStack.pin(to: view, anchors: [.leading(0), .trailing(0), .top(28), .bottom(-24)])
+  }
+  
+  override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
     getFreshLocations()
   }
   
@@ -178,6 +217,8 @@ class MainViewController: UIViewController {
       addInfectedMatchedMarker(infectedLocation: matchedLocation.infectedLocation)
       addUserMatchedMarker(userLocation: matchedLocation.userLocation)
     }
+    guard !locations.matchedLocations.isEmpty else { return }
+    drawerContent = .visitedLocationsPanel
   }
   
   private func addInfectedMatchedMarker(infectedLocation: RecordedLocation) {
@@ -214,7 +255,7 @@ class MainViewController: UIViewController {
   
   @objc private func statusTapped() {
     print("status tapped")
-    displayChangeStatusView()
+    drawerContent = .changeStatusView
   }
   
   @objc private func callEmergencyServiceTapped() {
@@ -229,21 +270,40 @@ class MainViewController: UIViewController {
     print("today tapped")
   }
   
-  private var drawerView: DrawerView?
   private func displayChangeStatusView() {
-    guard drawerView == nil else { return }
     let changeStatusView = ChangeStatueView()
     changeStatusView.delegate = self
     changeStatusView.translatesAutoresizingMaskIntoConstraints = false
-    let drawerView = DrawerView()
     drawerView.contentView = changeStatusView
-    self.view.addSubview(drawerView)
-    drawerView.translatesAutoresizingMaskIntoConstraints = false
-    drawerView.pinToSuperview(anchors: [.leading(0), .trailing(0), .bottom(-24)])
-    
-    self.drawerView = drawerView
+    showDrawer()
+  }
+  
+  private func displayMatchedLocationsPanel(_ matchedLocations: [MatchedLocation]) {
+    guard let visitedLocationsPanel = VisitedLocationsPanel(locations: matchedLocations) else { return }
+    visitedLocationsPanel.delegate = self
+    visitedLocationsPanel.translatesAutoresizingMaskIntoConstraints = false
+    drawerView.contentView = visitedLocationsPanel
+    showDrawer()
+  }
+  
+  private func showDrawer() {
+    guard drawerView.isHidden else {
+      return
+    }
     UIView.animate(withDuration: 0.4) {
-      self.drawerView?.show()
+      self.drawerView.isHidden = false
+    }
+  }
+  
+  private func dismissDrawer(completion: (() -> ())? = nil) {
+    guard !drawerView.isHidden else {
+      completion?()
+      return
+    }
+    UIView.animate(withDuration: 0.4, animations: {
+      self.drawerView.isHidden = true
+    }) { _ in
+      completion?()
     }
   }
   
@@ -259,8 +319,7 @@ class MainViewController: UIViewController {
 
 extension MainViewController: ChagneStatusViewDelegate {
   func statusChanged(to status: StatusOption) {
-    drawerView?.removeFromSuperview()
-    drawerView = nil
+    drawerContent = .none
     switch status {
     case .infected:
       presentShareLocationScreen()
@@ -270,8 +329,23 @@ extension MainViewController: ChagneStatusViewDelegate {
   }
   
   func statusChangeDismissed() {
-    self.drawerView?.removeFromSuperview()
-    drawerView = nil
+    drawerContent = .none
+  }
+}
+
+extension MainViewController: VisitedLocationsPanelDelegate {
+  func visitedLocationsDidSelectLocation(_ location: MatchedLocation) {
+    let coordinate = CLLocationCoordinate2D(latitude: location.userLocation.location.lat, longitude: location.userLocation.location.lon)
+    let cameraUpdate = GMSCameraUpdate.setTarget(coordinate, zoom: 16)
+    mapView.animate(with: cameraUpdate)
+  }
+  
+  func visitedLocationsPanelCallEmergency() {
+    drawerContent = .none
+  }
+  
+  func visitedLocationsPanelOpenHealthAdministrationWebsite() {
+    drawerContent = .none
   }
 }
 

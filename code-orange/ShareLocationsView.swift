@@ -175,6 +175,8 @@ class CodeOrangeTextField: UITextField {
     borderColor = .orange
     borderWidth = 2
     cornerRadius = 8
+    keyboardType = .numberPad
+    // this doesnt wotk with numPad. add button instead
     returnKeyType = .continue
   }
   

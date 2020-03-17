@@ -51,7 +51,7 @@ class ChangeStatueView: UIView {
   }
   
   private func makeConstraints() {
-    dismissButton.pinToSuperview(anchors: [.top(0), .leading(32)])
+    dismissButton.pinToSuperview(anchors: [.top(16), .leading(32)])
     mainStackView.pinToSuperview(anchors: [.top(40), .bottom(32), .leading(32), .trailing(32)])
   }
   

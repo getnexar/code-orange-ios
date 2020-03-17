@@ -35,6 +35,7 @@ struct RecordedLocation: Equatable, Codable {
   var location: CoronaLocation
   var startTime: Date
   var endTime: Date
+  var address: String?
   
   init?(serverLocation: ServerRecordedLocation) {
     self.location = CoronaLocation(lat: serverLocation.lat, lon: serverLocation.lon)
@@ -49,7 +50,7 @@ struct RecordedLocation: Equatable, Codable {
   
   func isLocationColliding(with otherRecordedLocation: RecordedLocation,
                            collisionThresholdInMeters: Double) -> Bool {
-    return self.location.isCollding(with: otherRecordedLocation.location,
+    return self.location.isColliding(with: otherRecordedLocation.location,
                                     collisionThresholdInMeters: collisionThresholdInMeters)
   }
   
@@ -83,7 +84,7 @@ struct CoronaLocation: Equatable, Codable {
     return location.distance(from: otherLocation)
   }
   
-  func isCollding(with otherCoronaLocaion: CoronaLocation,
+  func isColliding(with otherCoronaLocaion: CoronaLocation,
                   collisionThresholdInMeters: Double) -> Bool {
     return self.distance(from: otherCoronaLocaion) <= collisionThresholdInMeters
   }
