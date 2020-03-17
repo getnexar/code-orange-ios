@@ -24,6 +24,7 @@ class MainViewController: UIViewController {
   }
   private static let initialZoomLevel: Float = 9
   private static let defaultLocation = CLLocationCoordinate2D(latitude: 32.086801, longitude: 34.789749)
+  private var shareLocationView : ShareLocationView?
 
   private lazy var mainStack: UIStackView = {
     let stackView = UIStackView()
@@ -245,18 +246,44 @@ class MainViewController: UIViewController {
       self.drawerView?.show()
     }
   }
+  
+  private func presentShareLocationScreen() {
+    let shareLocationView = ShareLocationView()
+    shareLocationView.translatesAutoresizingMaskIntoConstraints = false
+    view.addSubview(shareLocationView)
+    shareLocationView.fillSuperview()
+    shareLocationView.delegate = self
+    self.shareLocationView = shareLocationView
+  }
 }
 
 extension MainViewController: ChagneStatusViewDelegate {
-  func statusChanged(to: StatusOption) {
+  func statusChanged(to status: StatusOption) {
     drawerView?.removeFromSuperview()
     drawerView = nil
-    // bring on the next screen
+    switch status {
+    case .infected:
+      presentShareLocationScreen()
+    default:
+      print("We do not report on status \(status.description)")
+    }
   }
   
   func statusChangeDismissed() {
     self.drawerView?.removeFromSuperview()
     drawerView = nil
+  }
+}
+
+extension MainViewController: ShareLocationViewDelegate {
+  func shareLocationsDismissed(_ sender: UIView) {
+    sender.removeFromSuperview()
+    shareLocationView = nil
+  }
+  
+  func shareLocationApproved(_ sender: UIView, code: String) {
+    sender.removeFromSuperview()
+    // trigger the location sharing backend here
   }
 }
 

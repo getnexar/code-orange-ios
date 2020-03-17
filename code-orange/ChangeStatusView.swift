@@ -13,11 +13,24 @@ protocol ChagneStatusViewDelegate: class {
   func statusChangeDismissed()
 }
 
-@objc enum StatusOption: Int {
+@objc enum StatusOption: Int, CustomStringConvertible {
   case infected = 0
   case notInfected
   case waitingForResults
   case notTested
+  
+  var description: String {
+    switch self {
+    case .infected:
+      return "infected"
+    case .notInfected:
+      return "not intected"
+    case .waitingForResults:
+      return "waiting for results"
+    case .notTested:
+      return "not tested"
+    }
+  }
 }
 
 class ChangeStatueView: UIView {
