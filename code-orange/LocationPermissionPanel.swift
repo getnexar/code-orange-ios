@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 
 protocol LocationPermissionPanelDelegate: class {
+  func locationPermissionSwitchToSettings()
   func locationPermissionAuthorized()
   func locationPermissionNotAuthorized()
   func locationPermissionMaximized()
@@ -17,19 +18,10 @@ protocol LocationPermissionPanelDelegate: class {
 
 class LocationPermissionPanel: UIView {
   
-  public static var didShow: Bool {
-    get {
-      return UserDefaults.standard.bool(forKey: "LocationPermissionPanel.didShow")
-    }
-    set {
-      UserDefaults.standard.set(newValue, forKey: "LocationPermissionPanel.didShow")
-    }
-  }
-  
   public weak var delegate: LocationPermissionPanelDelegate?
   public var isMinimized = false {
     didSet {
-      titleButton.titleLabel?.font = .systemFont(ofSize: isMinimized ? 14 : 24)
+      titleButton.titleLabel?.font = .boldSystemFont(ofSize: isMinimized ? 14 : 24)
       bodyLabel.text = isMinimized ? compactText : fullText
       yesButton.setTitle(isMinimized ? approveCompactText : approveText, for: .normal)
       noButton.isHidden = isMinimized
@@ -62,6 +54,7 @@ class LocationPermissionPanel: UIView {
     button.titleLabel?.font = .boldSystemFont(ofSize: 24)
     button.titleLabel?.textAlignment = .right
     button.addTarget(self, action: #selector(titleTapped), for: .touchUpInside)
+    button.titleLabel?.numberOfLines = 0
     return button
   }()
   
@@ -71,6 +64,7 @@ class LocationPermissionPanel: UIView {
     label.textColor = .nxGrey90
     label.textAlignment = .right
     label.text = fullText
+    label.numberOfLines = 0
     return label
   }()
   
@@ -81,6 +75,9 @@ class LocationPermissionPanel: UIView {
     button.setTitle(approveText, for: .normal)
     button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
     button.addTarget(self, action: #selector(yesTapped), for: .touchUpInside)
+    button.setAutoLayoutHeight(52)
+    button.clipsToBounds = true
+    button.layer.cornerRadius = 8
     return button
   }()
   
@@ -93,12 +90,19 @@ class LocationPermissionPanel: UIView {
     button.setTitle("לא, איני מעוניין כרגע", for: .normal)
     button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
     button.addTarget(self, action: #selector(noTapped), for: .touchUpInside)
+    button.setAutoLayoutHeight(52)
+    button.clipsToBounds = true
+    button.layer.cornerRadius = 8
     return button
 
   }()
   
   @objc private func yesTapped() {
-    delegate?.locationPermissionAuthorized()
+    if isMinimized {
+      delegate?.locationPermissionSwitchToSettings()
+    } else {
+      delegate?.locationPermissionAuthorized()
+    }
   }
   
   @objc private func noTapped() {

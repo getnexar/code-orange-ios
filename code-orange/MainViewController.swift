@@ -16,6 +16,7 @@ class MainViewController: UIViewController {
     case none
     case changeStatusView
     case visitedLocationsPanel
+    case permissions(minimized: Bool)
   }
   
   public weak var currentLocationProvider: CurrentLocationProvider?
@@ -45,6 +46,8 @@ class MainViewController: UIViewController {
         dismissDrawer() {
           self.displayMatchedLocationsPanel(self.locations?.matchedLocations ?? [])
         }
+      case .permissions:
+        self.displayLocationPermissionPanel()
       }
     }
   }
@@ -99,7 +102,6 @@ class MainViewController: UIViewController {
   private lazy var mapView: GMSMapView = {
     let location = currentLocationProvider?.currentLocation ?? MainViewController.defaultLocation
     let mapView = GMSMapView(frame: .zero, camera: GMSCameraPosition(target: location, zoom: MainViewController.initialZoomLevel))
-    mapView.isMyLocationEnabled = true
     return mapView
   }()
   
@@ -175,14 +177,20 @@ class MainViewController: UIViewController {
   
   override func viewDidLoad() {
     super.viewDidLoad()
+    NotificationCenter.default.addObserver(self, selector: #selector(appMovedToForeground), name: UIApplication.didBecomeActiveNotification, object: nil)
+    
     view.backgroundColor = .white
     view.addSubview(mainStack)
     mainStack.pin(to: view, anchors: [.leading(0), .trailing(0), .top(28), .bottom(-24)])
   }
   
+  deinit {
+    NotificationCenter.default.removeObserver(self)
+  }
+  
   override func viewDidAppear(_ animated: Bool) {
     super.viewDidAppear(animated)
-    getFreshLocations()
+    refreshLocation()
   }
   
   private func getLocalizedInsets(top: CGFloat, left: CGFloat, bottom: CGFloat, right: CGFloat) -> UIEdgeInsets {
@@ -286,6 +294,26 @@ class MainViewController: UIViewController {
     showDrawer()
   }
   
+  private func displayLocationPermissionPanel() {
+    guard case let .permissions(minimized) = drawerContent else {
+      return
+    }
+    if let existingPanel = drawerView.contentView as? LocationPermissionPanel {
+      UIView.animate(withDuration: 0.4) {
+        existingPanel.isMinimized = minimized
+      }
+      showDrawer()
+      return
+    }
+    
+    let panel = LocationPermissionPanel()
+    panel.translatesAutoresizingMaskIntoConstraints = false
+    panel.delegate = self
+    panel.isMinimized = minimized
+    drawerView.contentView = panel
+    showDrawer()
+  }
+  
   private func showDrawer() {
     guard drawerView.isHidden else {
       return
@@ -305,6 +333,29 @@ class MainViewController: UIViewController {
     }) { _ in
       completion?()
     }
+  }
+  
+  private func refreshLocation() {
+    switch CLLocationManager.authorizationStatus() {
+    case .authorizedAlways:
+      getFreshLocations()
+      mapView.isMyLocationEnabled = true
+      if case .permissions = drawerContent {
+        drawerContent = .none
+      }
+    case .notDetermined:
+      mapView.isMyLocationEnabled = false
+      drawerContent = .permissions(minimized: false)
+    case .authorizedWhenInUse, .denied, .restricted:
+      mapView.isMyLocationEnabled = false
+      drawerContent = .permissions(minimized: true)
+    @unknown default:
+      return
+    }
+  }
+  
+  @objc private func appMovedToForeground() {
+    refreshLocation()
   }
 }
 
@@ -332,6 +383,30 @@ extension MainViewController: VisitedLocationsPanelDelegate {
   
   func visitedLocationsPanelOpenHealthAdministrationWebsite() {
     drawerContent = .none
+  }
+}
+
+extension MainViewController: LocationPermissionPanelDelegate {
+  func locationPermissionSwitchToSettings() {
+    guard CLLocationManager.authorizationStatus() != .notDetermined else {
+      drawerContent = .permissions(minimized: false)
+      return
+    }
+    guard let url = URL(string:UIApplication.openSettingsURLString) else { return}
+    UIApplication.shared.open(url)
+  }
+  
+  func locationPermissionAuthorized() {
+    (UIApplication.shared.delegate as? AppDelegate)?.startLocationTracking()
+    drawerContent = .none
+  }
+  
+  func locationPermissionNotAuthorized() {
+    drawerContent = .permissions(minimized: true)
+  }
+  
+  func locationPermissionMaximized() {
+    // TODO: apply dark shade on view
   }
 }
 
