@@ -36,7 +36,9 @@ struct RecordedLocation: Equatable, Codable {
   var startTime: Date
   var endTime: Date
   var address: String?
-  
+}
+
+extension RecordedLocation {
   init?(serverLocation: ServerRecordedLocation) {
     self.location = CoronaLocation(lat: serverLocation.lat, lon: serverLocation.lon)
     guard let startTime = dataFormatter.date(from: serverLocation.startTime),

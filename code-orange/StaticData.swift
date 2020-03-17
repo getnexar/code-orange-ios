@@ -15,4 +15,9 @@ class StaticData {
   static let userData = """
   {"locations":[{"startTime":"2020-03-04T18:30:00+02:00","endTime":"2020-03-04T20:00:00+02:00","lat":32.78675,"lon":35.53528,"radius":0.0},{"startTime":"2020-03-02T10:30:00+02:00","endTime":"2020-03-02T12:00:00+02:00","lat":31.77552,"lon":35.18739380000,"radius":0.0}]}
 """
+
+  static let testRideData = """
+  {"locations":[{"startTime":"2020-03-17T09:00:00+02:00","endTime":"2020-03-17T13:30:00+02:00","lat":32.05915,"lon":34.78358,"radius":0.0},{"startTime":"2020-03-17T09:00:00+02:00","endTime":"2020-03-17T13:30:00+02:00","lat":32.06167,"lon":34.78488,"radius":0.0}]}
+"""
+
 }
