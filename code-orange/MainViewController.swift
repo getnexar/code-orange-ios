@@ -71,7 +71,7 @@ class MainViewController: UIViewController {
     stackView.spacing = 12
     stackView.axis = .horizontal
     stackView.isLayoutMarginsRelativeArrangement = true
-    stackView.layoutMargins = UIEdgeInsets(top: 0, left: 24, bottom: 24, right: 24)
+    stackView.layoutMargins = UIEdgeInsets(top: 0, left: 24, bottom: 0, right: 24)
     stackView.addArrangedSubview(statusButton)
     stackView.addArrangedSubview(UIView())
     stackView.addArrangedSubview(callEmergencyButton)
