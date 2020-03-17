@@ -34,13 +34,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     UIApplication.shared.applicationIconBadgeNumber = 0
 
-//    if let launchOptions = launchOptions,
-//      let isLocationKey = launchOptions[UIApplication.LaunchOptionsKey.location] as? Bool,
-//      isLocationKey {
-//      locationService.startUpdatingLocation()
-//
-//    }
-
     if !locationService.isUpdatingLocation {
       locationService.startUpdatingLocation()
     }

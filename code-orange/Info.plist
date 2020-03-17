@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
-	<string>Help us tracking your location to prevent COVID-19 virus spread</string>
+	<string>Help us tracking your location to prevent COVID-19 virus from spreading</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Help us tracking your location to prevent COVID-19 virus spread</string>
+	<string>Help us tracking your location to prevent COVID-19 virus from spreading</string>
 	<key>LSApplicationCategoryType</key>
 	<string></string>
 	<key>CFBundleDevelopmentRegion</key>

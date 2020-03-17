@@ -50,8 +50,9 @@ class LocationsProvider {
     zones.forEach { zone in
       let location = CoronaLocation(lat: zone.latitude, lon: zone.longitude)
       // TODO: Validate the date
-      let date = zone.dateEnter ?? Date(timeIntervalSince1970: 0.0)
-      let recordedLocation = RecordedLocation(location: location, startTime: date, endTime: date)
+      let startTime = zone.startTime ?? Date(timeIntervalSince1970: 0.0)
+      let endTime = zone.endTime ?? Date(timeIntervalSince1970: 0.0)
+      let recordedLocation = RecordedLocation(location: location, startTime: startTime, endTime: endTime)
       recordedLocations.append(recordedLocation)
     }
 
