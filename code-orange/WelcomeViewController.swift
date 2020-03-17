@@ -47,7 +47,7 @@ class WelcomeViewController: UIViewController {
   
   lazy var subtitleLabel: UILabel = {
     let label = UILabel()
-    label.font = UIFont.boldSystemFont(ofSize: 14)
+    label.font = UIFont.boldSystemFont(ofSize: 16)
     label.text = "האפליקציה שתעזור לכולנו לעצור את התפשטות וירוס הקורונה בישראל."
     label.textAlignment = .right
     label.textColor = .nxGrey90
@@ -57,7 +57,7 @@ class WelcomeViewController: UIViewController {
 
   lazy var bodyLabel: UILabel = {
     let label = UILabel()
-    label.font = UIFont.systemFont(ofSize: 14)
+    label.font = UIFont.systemFont(ofSize: 16)
     label.text = "האפליקציה מציגה לך דיווחים מאומתים של מיקומים וזמנים בהם היו חולי קורונה.\nהאפליקציה גם מאפשרת לך לשמור על מכשירך בצורה מאובטחת את רשימת המקומות בהם אתה ביקרת, ולהצליב עבורך את אותם מקומות עם המקומות המדווחים כדי שתוכל לדעת אם אתה בקבוצת הסיכון ולפעול בהתאם."
     label.textAlignment = .right
     label.textColor = .nxGrey90

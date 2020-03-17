@@ -95,14 +95,14 @@ class VisitedLocationsPanel: UIView {
 
   private lazy var leftPageButton: UIButton = {
     let button = UIButton()
-    button.setImage(UIImage(named: "left"), for: .normal)
+    button.setImage(getLocalizedImage(image: UIImage(named: "left")), for: .normal)
     button.addTarget(self, action: #selector(previousLocationTapped), for: .touchUpInside)
     return button
   }()
 
   private lazy var rightPageButton: UIButton = {
     let button = UIButton()
-    button.setImage(UIImage(named: "right"), for: .normal)
+    button.setImage(getLocalizedImage(image: UIImage(named: "right")), for: .normal)
     button.addTarget(self, action: #selector(nextLocationPickedTapped), for: .touchUpInside)
     return button
   }()
@@ -229,5 +229,15 @@ private class HorizontalPaddingStackView: UIStackView {
   }
   required init(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
+  }
+}
+
+extension UIView {
+  func getLocalizedImage(image: UIImage?) -> UIImage? {
+    if UIView.userInterfaceLayoutDirection(for: self.semanticContentAttribute) == .rightToLeft {
+      return image?.imageFlippedForRightToLeftLayoutDirection()
+    } else {
+      return image
+    }
   }
 }
