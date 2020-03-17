@@ -29,11 +29,17 @@ class LocationPermissionPanel: UIView {
   public weak var delegate: LocationPermissionPanelDelegate?
   public var isMinimized = false {
     didSet {
-      bodyLabel.isHidden = isMinimized
+      titleButton.titleLabel?.font = .systemFont(ofSize: isMinimized ? 14 : 24)
+      bodyLabel.text = isMinimized ? compactText : fullText
+      yesButton.setTitle(isMinimized ? approveCompactText : approveText, for: .normal)
       noButton.isHidden = isMinimized
-      yesButton.isHidden = isMinimized
     }
   }
+  
+  private let fullText = "- בכדי שנוכל להצליב את מיקומיך עם רשימת המקומות בהם היו נשאי קורונה, אנא אשר לנו גישה למיקומך.\n\n- מיקומך ידגם בכל 15 דקות והמידע ישמר בצורה מאובטחת אך ורק על הטלפון שלך.\n\n- המידע לא ישלח בצורה אוטומטית לאף אחד, כולל לא למשרד הבריאות.\n\n- אנו נבצע ייבוא של מידע המיקום שלך מהשבועיים האחרונים מ-google maps כדי למצוא עבורך את מירב ההצלבות"
+  private let compactText = "בכדי שנוכל להצליב את מיקומיך עם רשימת המקומות בהם היו נשאי קורונה, אנא אשר לנו גישה למיקומך."
+  private let approveText = "כן, אני מעוניין"
+  private let approveCompactText = "מאשר גישה למיקום"
   
   private lazy var stackView: UIStackView = {
     let stackView = UIStackView()
@@ -64,21 +70,20 @@ class LocationPermissionPanel: UIView {
     label.font = .systemFont(ofSize: 14)
     label.textColor = .nxGrey90
     label.textAlignment = .right
-    label.text = "- בכדי שנוכל להצליב את מיקומיך עם רשימת המקומות בהם היו נשאי קורונה, אנא אשר לנו גישה למיקומך.\n\n- מיקומך ידגם בכל 15 דקות והמידע ישמר בצורה מאובטחת אך ורק על הטלפון שלך.\n\n- המידע לא ישלח בצורה אוטומטית לאף אחד, כולל לא למשרד הבריאות.\n\n- אנו נבצע ייבוא של מידע המיקום שלך מהשבועיים האחרונים מ-google maps כדי למצוא עבורך את מירב ההצלבות"
+    label.text = fullText
     return label
   }()
-
+  
   private lazy var yesButton: UIButton = {
     let button = UIButton()
     button.backgroundColor = .nxOrange
     button.setTitleColor(.nxGrey90, for: .normal)
-    button.setTitle("כן, אני מעוניין", for: .normal)
+    button.setTitle(approveText, for: .normal)
     button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 14)
     button.addTarget(self, action: #selector(yesTapped), for: .touchUpInside)
     return button
-
   }()
-
+  
   private lazy var noButton: UIButton = {
     let button = UIButton()
     button.backgroundColor = .nxWhite
