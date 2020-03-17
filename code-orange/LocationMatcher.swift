@@ -7,6 +7,11 @@
 
 import Foundation
 
+struct MatchedLocation {
+  var userLocation: RecordedLocation
+  var infectedLocation: RecordedLocation
+}
+
 class LocationMatcher {
   
   let matchingDistanceThresholdInMeters: Double
@@ -17,15 +22,16 @@ class LocationMatcher {
     self.matchingTimeThreshold = matchingTimeThreshold
   }
   
-  func matchLocations(of userLocations: [RecordedLocation],
-                      and coronaLocations: [RecordedLocation]) -> [RecordedLocation] {
-    var matchingLocations = [RecordedLocation]()
+  func matchLocations(userLocations: [RecordedLocation],
+                      coronaLocations: [RecordedLocation]) -> [MatchedLocation] {
+    var matchingLocations = [MatchedLocation]()
     userLocations.forEach { userLocation in
-      coronaLocations.forEach { coronaLocation in
+      for coronaLocation in coronaLocations {
         if userLocation.isTimeColliding(with: coronaLocation, collisionThresholdInSecs: matchingTimeThreshold
           ),
           userLocation.isLocationColliding(with: coronaLocation, collisionThresholdInMeters: matchingDistanceThresholdInMeters) {
-          matchingLocations.append(userLocation)
+          matchingLocations.append(MatchedLocation(userLocation: userLocation, infectedLocation: coronaLocation))
+          break
         }
       }
     }

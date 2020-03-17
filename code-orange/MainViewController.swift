@@ -173,35 +173,42 @@ class MainViewController: UIViewController {
   
   private func loadMatchedLocations() {
     guard let locations = locations else { return }
-    locations.matchedLocations.forEach {
-      let marker = GMSMarker()
-      let imageView = UIImageView(image: UIImage(named: "mapAnnotation"))
-      imageView.tintColor = .nxOrange
-      marker.iconView = imageView
-      marker.position = CLLocationCoordinate2D(latitude: $0.location.lat, longitude: $0.location.lon)
-      marker.map = mapView
-      markers.append(marker)
+    locations.matchedLocations.forEach { matchedLocation in
+      addInfectedMatchedMarker(infectedLocation: matchedLocation.infectedLocation)
+      addUserMatchedMarker(userLocation: matchedLocation.userLocation)
     }
+  }
+  
+  private func addInfectedMatchedMarker(infectedLocation: RecordedLocation) {
+    addCircleMarker(lat: infectedLocation.location.lat, lon: infectedLocation.location.lon, color: .orange)
+  }
+  
+  private func addUserMatchedMarker(userLocation: RecordedLocation) {
+    let marker = GMSMarker()
+    let imageView = UIImageView(image: UIImage(named: "pastUserLocation"))
+    imageView.tintColor = .nxPurple60
+    marker.iconView = imageView
+    marker.position = CLLocationCoordinate2D(latitude: userLocation.location.lat, longitude: userLocation.location.lon)
+    marker.map = mapView
+    markers.append(marker)
   }
   
   private func loadOtherLocations() {
     guard let locations = locations else { return }
     
-    locations.otherLocations.suffix(100).forEach {
-      let circleView = UIView()
-      circleView.translatesAutoresizingMaskIntoConstraints = false
-      circleView.backgroundColor = .nxPurple60
-      circleView.alpha = 0.4
-      circleView.setAutoLayoutWidth(30)
-      circleView.setSquareRatio()
-      circleView.layer.masksToBounds = true
-      circleView.layer.cornerRadius = 15
-      let marker = GMSMarker()
-      marker.iconView = circleView
-      marker.position = CLLocationCoordinate2D(latitude: $0.location.lat, longitude: $0.location.lon)
-      marker.map = mapView
-      markers.append(marker)
+    locations.otherLocations.suffix(100).forEach { infectedLocation in
+      addCircleMarker(lat: infectedLocation.location.lat, lon: infectedLocation.location.lon, color: .nxPurple60)
     }
+  }
+  
+  private func addCircleMarker(lat: Double, lon: Double, color: UIColor) {
+    let circleView = CircleMarkerView(color: color)
+    let marker = GMSMarker()
+    marker.iconView = circleView
+    marker.groundAnchor = CGPoint(x: 0.5, y: 0.5)
+    marker.position = CLLocationCoordinate2D(latitude: lat, longitude: lon)
+    marker.map = mapView
+    markers.append(marker)
   }
   
   @objc private func statusTapped() {
@@ -250,5 +257,22 @@ extension MainViewController: ChagneStatusViewDelegate {
   func statusChangeDismissed() {
     self.drawerView?.removeFromSuperview()
     drawerView = nil
+  }
+}
+
+class CircleMarkerView: UIView {
+  init(color: UIColor) {
+    super.init(frame: .zero)
+    translatesAutoresizingMaskIntoConstraints = false
+    backgroundColor = color
+    alpha = 0.4
+    setAutoLayoutWidth(30)
+    setSquareRatio()
+    layer.masksToBounds = true
+    cornerRadius = 15
+  }
+  
+  required init?(coder aDecoder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
   }
 }
