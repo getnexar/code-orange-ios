@@ -44,9 +44,7 @@ class DrawerView: UIView {
     layer.masksToBounds = false
     layer.shadowColor = UIColor.black.cgColor
     layer.cornerRadius = 24
-    layer.shadowOpacity = 0.5
-    layer.shadowOffset = .zero
-    layer.shadowRadius = 12
+    setShadow(.shadow20)
     addSubview(containerView)
     containerView.translatesAutoresizingMaskIntoConstraints = false
     containerView.fillSuperview()
