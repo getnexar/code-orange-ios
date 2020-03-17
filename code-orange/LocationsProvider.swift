@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CoreLocation
 
 struct Locations {
   var matchedLocations: [MatchedLocation]
@@ -35,7 +36,7 @@ class LocationsProvider {
     let coronaNotMatchingLocations = coronaLocations.filter { !infectedMatchedLocations.contains($0) }
     return Locations(matchedLocations: matchingLocations, otherLocations: coronaNotMatchingLocations)
   }
-  
+
   private func getStoredCoronaLocations() -> [RecordedLocation]? {
     // this is temp
     let communicator = Communicator()
@@ -43,8 +44,32 @@ class LocationsProvider {
   }
   
   private func getStoredUserLocations() -> [RecordedLocation]? {
-    // this is temp
-    let communicator = Communicator()
-    return communicator.getUserData()
+    let zones = StorageService.shared.getUserLocations()
+    var recordedLocations = [RecordedLocation]()
+
+    zones.forEach { zone in
+      let location = CoronaLocation(lat: zone.latitude, lon: zone.longitude)
+      // TODO: Validate the date
+      let startTime = zone.startTime ?? Date(timeIntervalSince1970: 0.0)
+      let endTime = zone.endTime ?? Date(timeIntervalSince1970: 0.0)
+      let recordedLocation = RecordedLocation(location: location, startTime: startTime, endTime: endTime)
+      recordedLocations.append(recordedLocation)
+    }
+
+    return recordedLocations
+  }
+}
+
+extension LocationsProvider {
+  public func doesCoronaLocationsContain(location: CLLocation, date: Date) -> Bool {
+    let newLocation = RecordedLocation(location: CoronaLocation(lat: location.coordinate.latitude,
+                                                                lon: location.coordinate.longitude),
+                                       startTime: date,
+                                       endTime: date)
+
+    guard let coronaLocations = getStoredCoronaLocations() else { return false }
+
+    let matchingLocations = locationMatcher.matchLocations(userLocations: [newLocation], coronaLocations: coronaLocations)
+    return !matchingLocations.isEmpty
   }
 }
