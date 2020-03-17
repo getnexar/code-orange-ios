@@ -31,6 +31,7 @@ class MainViewController: UIViewController {
   }
   private static let initialZoomLevel: Float = 9
   private static let defaultLocation = CLLocationCoordinate2D(latitude: 32.086801, longitude: 34.789749)
+  private var shareLocationView : ShareLocationView?
   
   private var drawerContent: DrawerContent = .none {
     didSet {
@@ -70,7 +71,7 @@ class MainViewController: UIViewController {
     stackView.spacing = 12
     stackView.axis = .horizontal
     stackView.isLayoutMarginsRelativeArrangement = true
-    stackView.layoutMargins = UIEdgeInsets(top: 0, left: 24, bottom: 24, right: 24)
+    stackView.layoutMargins = UIEdgeInsets(top: 0, left: 24, bottom: 0, right: 24)
     stackView.addArrangedSubview(statusButton)
     stackView.addArrangedSubview(UIView())
     stackView.addArrangedSubview(callEmergencyButton)
@@ -175,6 +176,7 @@ class MainViewController: UIViewController {
   
   override func viewDidLoad() {
     super.viewDidLoad()
+    view.backgroundColor = .white
     view.addSubview(mainStack)
     mainStack.pin(to: view, anchors: [.leading(0), .trailing(0), .top(28), .bottom(-24)])
   }
@@ -305,12 +307,26 @@ class MainViewController: UIViewController {
       completion?()
     }
   }
+  
+  private func presentShareLocationScreen() {
+    let shareLocationView = ShareLocationView()
+    shareLocationView.translatesAutoresizingMaskIntoConstraints = false
+    view.addSubview(shareLocationView)
+    shareLocationView.fillSuperview()
+    shareLocationView.delegate = self
+    self.shareLocationView = shareLocationView
+  }
 }
 
 extension MainViewController: ChagneStatusViewDelegate {
-  func statusChanged(to: StatusOption) {
+  func statusChanged(to status: StatusOption) {
     drawerContent = .none
-    // bring on the next screen
+    switch status {
+    case .infected:
+      presentShareLocationScreen()
+    default:
+      print("We do not report on status \(status.description)")
+    }
   }
   
   func statusChangeDismissed() {
@@ -331,6 +347,18 @@ extension MainViewController: VisitedLocationsPanelDelegate {
   
   func visitedLocationsPanelOpenHealthAdministrationWebsite() {
     drawerContent = .none
+  }
+}
+
+extension MainViewController: ShareLocationViewDelegate {
+  func shareLocationsDismissed(_ sender: UIView) {
+    sender.removeFromSuperview()
+    shareLocationView = nil
+  }
+  
+  func shareLocationApproved(_ sender: UIView, code: String) {
+    sender.removeFromSuperview()
+    // trigger the location sharing backend here
   }
 }
 

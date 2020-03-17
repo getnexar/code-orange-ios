@@ -26,7 +26,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   
   func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
     GMSServices.provideAPIKey("AIzaSyB57-_ZDUWdRSUi9ladkLO91d8wTlzpC8w")
-
+    window = UIWindow(frame: UIScreen.main.bounds)
+    if WelcomeViewController.didShow {
+      window?.rootViewController = MainViewController()
+    } else {
+      window?.rootViewController = WelcomeViewController()
+    }
+    window?.makeKeyAndVisible()
     UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { granted, error in
       if let error = error {
           print("User Notification authorization request failed with error: ", error)
