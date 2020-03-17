@@ -14,24 +14,21 @@ class DrawerView: UIView {
   public var contentView: UIView? {
     set {
       self.contentView?.removeFromSuperview()
-      self.hidingConstraint?.isActive = false
       guard let contentView = newValue else { return }
       install(contentView)
     }
     get {
-      return subviews.first
+      return containerView.subviews.last
     }
   }
   
-  public func show() {
-    alpha = 1 // TODO: use hiding constraint
-  }
-  
-  public func hide() {
-    alpha = 0 // TODO: use hiding constraint
-  }
-  
-  private var hidingConstraint: NSLayoutConstraint?
+  private lazy var containerView: UIView = {
+    let view = UIView()
+    view.layer.masksToBounds = true
+    view.layer.cornerRadius = 24
+    view.backgroundColor = .white
+    return view
+  }()
   
   init() {
     super.init(frame: .zero)
@@ -44,20 +41,18 @@ class DrawerView: UIView {
   }
   
   private func commonInit() {
-    layer.masksToBounds = true
+    layer.masksToBounds = false
+    layer.shadowColor = UIColor.black.cgColor
     layer.cornerRadius = 24
-    backgroundColor = .white
-    alpha = 0 // TODO: use hiding constraint
+    setShadow(.shadow20)
+    addSubview(containerView)
+    containerView.translatesAutoresizingMaskIntoConstraints = false
+    containerView.fillSuperview()
   }
   
   private func install(_ contentView: UIView) {
-    addSubview(contentView)
+    containerView.addSubview(contentView)
     contentView.translatesAutoresizingMaskIntoConstraints = false
-    contentView.pinToSuperview(anchors: [.leading(0), .trailing(0)])
-    let topContraint = contentView.topAnchor.constraint(equalTo: topAnchor, constant: 24)
-    topContraint.isActive = true
-    let bottomContraint = contentView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -24)
-    bottomContraint.isActive = true
-    
+    contentView.pinToSuperview(anchors: [.top(0), .leading(0), .trailing(0), .bottom(24)])
   }
 }

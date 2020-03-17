@@ -150,5 +150,12 @@ extension Shadow {
                   spread: 0,
                   color: .black)
   }
+  public static var shadow20: Shadow {
+    return Shadow(size: .zero,
+                  radius: 12,
+                  opacity: 0.5,
+                  spread: 0,
+                  color: .black)
+  }
 }
 

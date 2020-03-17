@@ -27,6 +27,7 @@
 		77A3715B241F982400913FB3 /* DrawerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77A3715A241F982400913FB3 /* DrawerView.swift */; };
 		77AA0548241E71BC002EC3DF /* UIView+AutoLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77AA0547241E71BC002EC3DF /* UIView+AutoLayout.swift */; };
 		77AA054A241EB904002EC3DF /* CurrentLocationProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77AA0549241EB904002EC3DF /* CurrentLocationProvider.swift */; };
+		77E55859241FC95300FFA45B /* VisitedLocationPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 77E55858241FC95300FFA45B /* VisitedLocationPanel.swift */; };
 		DAEE11DFC0C433E44F174B2F /* Pods_code_orangeTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D05ABFE5D0AAECB7FA466E9 /* Pods_code_orangeTests.framework */; };
 		EBC2BDDE74924428CC46DD47 /* Pods_code_orange.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DA767D39FD6802378DBB90C6 /* Pods_code_orange.framework */; };
 /* End PBXBuildFile section */
@@ -72,6 +73,7 @@
 		77A3715A241F982400913FB3 /* DrawerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DrawerView.swift; sourceTree = "<group>"; };
 		77AA0547241E71BC002EC3DF /* UIView+AutoLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+AutoLayout.swift"; sourceTree = "<group>"; };
 		77AA0549241EB904002EC3DF /* CurrentLocationProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrentLocationProvider.swift; sourceTree = "<group>"; };
+		77E55858241FC95300FFA45B /* VisitedLocationPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VisitedLocationPanel.swift; sourceTree = "<group>"; };
 		B2526FADFC6649CE407724FA /* Pods-code-orangeTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-code-orangeTests.release.xcconfig"; path = "Target Support Files/Pods-code-orangeTests/Pods-code-orangeTests.release.xcconfig"; sourceTree = "<group>"; };
 		DA767D39FD6802378DBB90C6 /* Pods_code_orange.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_code_orange.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -146,6 +148,7 @@
 				77A3715A241F982400913FB3 /* DrawerView.swift */,
 				233B0F4F241F6A7000F776CC /* StaticData.swift */,
 				233B0F51241F6C5E00F776CC /* Communicator.swift */,
+        77E55858241FC95300FFA45B /* VisitedLocationPanel.swift */,
 				233B0F53241FA01300F776CC /* ChangeStatusView.swift */,
 				233B0F55241FA3CE00F776CC /* Buttons.swift */,
 			);
@@ -344,6 +347,7 @@
 				7789EA73241E532400BC92E4 /* MainViewController.swift in Sources */,
 				233B0F52241F6C5E00F776CC /* Communicator.swift in Sources */,
 				77AA0548241E71BC002EC3DF /* UIView+AutoLayout.swift in Sources */,
+        77E55859241FC95300FFA45B /* VisitedLocationPanel.swift in Sources */,
 				233B0F56241FA3CE00F776CC /* Buttons.swift in Sources */,
 				233B0F54241FA01300F776CC /* ChangeStatusView.swift in Sources */,
 				7789EA6F241E532400BC92E4 /* AppDelegate.swift in Sources */,
