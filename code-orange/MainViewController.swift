@@ -24,6 +24,9 @@ class MainViewController: UIViewController {
   private var locationsProvider: LocationsProvider? {
     (UIApplication.shared.delegate as? AppDelegate)?.locationsProvider
   }
+  private var dataUploader: DataUploader? {
+    (UIApplication.shared.delegate as? AppDelegate)?.communicator as DataUploader?
+  }
   private var markers = [GMSMarker]()
   private var matchedLocationsToMarkers: [CLLocationCoordinate2D: CodeOrangeMarker]?
   private var visitedLocationsPanel: VisitedLocationsPanel?
@@ -512,7 +515,11 @@ extension MainViewController: ShareLocationViewDelegate {
   
   func shareLocationApproved(_ sender: UIView, code: String) {
     sender.removeFromSuperview()
-    // trigger the location sharing backend here
+    guard let dataUploader = dataUploader, let matchedLocations = self.locations?.matchedLocations else {
+      return
+    }
+    let locations = matchedLocations.compactMap { $0.userLocation }
+    dataUploader.shareInfectedLocations(locations)
   }
 }
 

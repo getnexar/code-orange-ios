@@ -17,6 +17,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
   let locationService = LocationService.shared
   let storageService = StorageService.shared
+  let communicator = Communicator()
 
   let communicator = Communicator()
 
