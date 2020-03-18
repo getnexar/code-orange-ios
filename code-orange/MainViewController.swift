@@ -16,6 +16,7 @@ class MainViewController: UIViewController {
     case none
     case changeStatusView
     case visitedLocationsPanel
+    case infectedLocationPanel
   }
   
   public weak var currentLocationProvider: CurrentLocationProvider?
@@ -32,6 +33,7 @@ class MainViewController: UIViewController {
   private static let initialZoomLevel: Float = 9
   private static let defaultLocation = CLLocationCoordinate2D(latitude: 32.086801, longitude: 34.789749)
   private var shareLocationView : ShareLocationView?
+  private var selectedMarker: CodeOrangeMarker?
   
   private var drawerContent: DrawerContent = .none {
     didSet {
@@ -41,6 +43,14 @@ class MainViewController: UIViewController {
       case .changeStatusView:
         dismissDrawer() {
           self.displayChangeStatusView()
+        }
+      case .infectedLocationPanel:
+        if oldValue == drawerContent {
+          displayInfectedLocationPanel()
+        } else {
+          dismissDrawer() {
+            self.displayInfectedLocationPanel()
+          }
         }
       case .visitedLocationsPanel:
         dismissDrawer() {
@@ -101,6 +111,7 @@ class MainViewController: UIViewController {
     let location = currentLocationProvider?.currentLocation ?? MainViewController.defaultLocation
     let mapView = GMSMapView(frame: .zero, camera: GMSCameraPosition(target: location, zoom: MainViewController.initialZoomLevel))
     mapView.isMyLocationEnabled = true
+    mapView.delegate = self
     return mapView
   }()
   
@@ -223,11 +234,11 @@ class MainViewController: UIViewController {
   }
   
   private func addInfectedMatchedMarker(infectedLocation: RecordedLocation) {
-    addCircleMarker(lat: infectedLocation.location.lat, lon: infectedLocation.location.lon, color: .orange)
+    addCircleMarker(recordedLocation: infectedLocation, color: .orange)
   }
   
   private func addUserMatchedMarker(userLocation: RecordedLocation) {
-    let marker = GMSMarker()
+    let marker = CodeOrangeMarker(startTime: userLocation.startTime, endTime: userLocation.endTime, address: userLocation.address)
     let imageView = UIImageView(image: UIImage(named: "pastUserLocation"))
     imageView.tintColor = .nxPurple60
     marker.iconView = imageView
@@ -240,16 +251,18 @@ class MainViewController: UIViewController {
     guard let locations = locations else { return }
     
     locations.otherLocations.suffix(100).forEach { infectedLocation in
-      addCircleMarker(lat: infectedLocation.location.lat, lon: infectedLocation.location.lon, color: .nxPurple60)
+      addCircleMarker(recordedLocation: infectedLocation, color: .nxPurple60)
     }
   }
   
-  private func addCircleMarker(lat: Double, lon: Double, color: UIColor) {
+  private func addCircleMarker(recordedLocation: RecordedLocation, color: UIColor) {
     let circleView = CircleMarkerView(color: color)
-    let marker = GMSMarker()
+    let marker = CodeOrangeMarker(startTime: recordedLocation.startTime,
+                                  endTime: recordedLocation.endTime,
+                                  address: recordedLocation.address)
     marker.iconView = circleView
     marker.groundAnchor = CGPoint(x: 0.5, y: 0.5)
-    marker.position = CLLocationCoordinate2D(latitude: lat, longitude: lon)
+    marker.position = CLLocationCoordinate2D(latitude: recordedLocation.location.lat, longitude: recordedLocation.location.lon)
     marker.map = mapView
     markers.append(marker)
   }
@@ -362,6 +375,26 @@ extension MainViewController: ShareLocationViewDelegate {
   }
 }
 
+extension MainViewController: GMSMapViewDelegate {
+  func mapView(_ mapView: GMSMapView, didTap marker: GMSMarker) -> Bool {
+    selectedMarker = marker as? CodeOrangeMarker
+    drawerContent = .infectedLocationPanel
+    return false
+  }
+  
+  func displayInfectedLocationPanel() {
+    guard let selectedMarker = selectedMarker else {
+      print("No selected marker")
+        return
+    }
+    
+    let infectedLocationPanel = InfectedLocationView(startTime: selectedMarker.startTime, endTime: selectedMarker.endTime, address: selectedMarker.address)
+    infectedLocationPanel.translatesAutoresizingMaskIntoConstraints = false
+    drawerView.contentView = infectedLocationPanel
+    showDrawer()
+  }
+}
+
 class CircleMarkerView: UIView {
   init(color: UIColor) {
     super.init(frame: .zero)
@@ -376,5 +409,17 @@ class CircleMarkerView: UIView {
   
   required init?(coder aDecoder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
+  }
+}
+
+class CodeOrangeMarker: GMSMarker {
+  var address: String?
+  var startTime: Date
+  var endTime: Date
+  
+  init(startTime: Date, endTime: Date, address: String?) {
+    self.startTime = startTime
+    self.endTime = endTime
+    self.address = address
   }
 }
