@@ -69,10 +69,6 @@ class MainViewController: UIViewController {
     stackView.addArrangedSubview(subtitleStack)
     stackView.addArrangedSubview(timeScrollView)
     stackView.addArrangedSubview(mapView)
-    stackView.addArrangedSubview(drawerView)
-    if #available(iOS 11.0, *) {
-      stackView.setCustomSpacing(-drawerView.layer.cornerRadius, after: mapView)
-    }
     return stackView
   }()
   
@@ -188,7 +184,9 @@ class MainViewController: UIViewController {
     super.viewDidLoad()
     view.backgroundColor = .white
     view.addSubview(mainStack)
-    mainStack.pin(to: view, anchors: [.leading(0), .trailing(0), .top(28), .bottom(-24)])
+    view.addSubview(drawerView)
+    mainStack.pin(to: view, anchors: [.leading(0), .trailing(0), .top(28), .bottom(0)])
+    drawerView.pin(to: view, anchors: [.leading(0), .trailing(0), .bottom(-24)])
   }
   
   override func viewDidAppear(_ animated: Bool) {
@@ -376,6 +374,10 @@ extension MainViewController: GMSMapViewDelegate {
     selectedMarker = marker as? CodeOrangeMarker
     drawerContent = .infectedLocationPanel
     return false
+  }
+  
+  func mapView(_ mapView: GMSMapView, didTapAt coordinate: CLLocationCoordinate2D) {
+    drawerContent = .none
   }
   
   func displayInfectedLocationPanel() {
