@@ -22,8 +22,8 @@ struct COLocation: Equatable, Codable {
   let startTime: Date
   let endTime: Date
   let radius: Double
-  let name: String
-  let comments: String
+  let name: String?
+  let comments: String?
 
   private enum CodingKeys: String, CodingKey {
     case lat

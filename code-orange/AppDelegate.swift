@@ -17,11 +17,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
   let locationService = LocationService.shared
   let storageService = StorageService.shared
+  let communicator = Communicator()
 
   public lazy var locationsProvider: LocationsProvider = {
     let locationsMatcher = LocationMatcher(matchingTimeThreshold: 30.minutes,
     mathcingDistanceThresholdInMeters: 30)
-    let communicator = Communicator()
     return LocationsProvider(locationMatcher: locationsMatcher, dataFetcher: communicator)
   }()
   

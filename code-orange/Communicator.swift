@@ -13,9 +13,13 @@ protocol DataFetcher {
   func getInfectedLocations() -> [COLocation]
 }
 
+protocol DataSetter {
+  func shareInfectedLocations(_ locations: [COLocation])
+}
+
 class Communicator {
   private let session: URLSession
-  private let serverUrl = "http://ec2-52-23-173-222.compute-1.amazonaws.com:8080/v1/events/covid-19/locations?patient_status=carrier&country=il"
+  private let serverUrl = "http://ec2-52-23-173-222.compute-1.amazonaws.com:8080/v1/events/covid-19/locations"
 
   private lazy var jsonDecoder: JSONDecoder = {
     let jsonDecoder = JSONDecoder()
@@ -25,11 +29,18 @@ class Communicator {
     return jsonDecoder
   }()
 
+  private lazy var jsonEncoder: JSONEncoder = {
+    let jsonEncoder = JSONEncoder()
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+    jsonEncoder.dateEncodingStrategy = .formatted(dateFormatter)
+    return jsonEncoder
+  }()
+  
   private var infectedLocations = [COLocation]()
 
   init(session: URLSession = .shared) {
     self.session = session
-
     updateInfectedLocations()
   }
 
@@ -43,7 +54,7 @@ class Communicator {
 
 extension Communicator: DataFetcher {
   func updateInfectedLocations() {
-    guard let url = URL(string: serverUrl) else { return }
+    guard let url = URL(string: serverUrl+"?patient_status=carrier&country=il") else { return }
 
     session.dataTask(with: url) { [weak self] data, response, error in
       if let data = data {
@@ -62,5 +73,27 @@ extension Communicator: DataFetcher {
 
   func getInfectedLocations() -> [COLocation] {
     return infectedLocations
+  }
+}
+
+extension Communicator: DataSetter {
+  func shareInfectedLocations(_ locations: [COLocation]) {
+    guard let url = URL(string: serverUrl) else { return }
+    var json = [String: Codable]()
+    json["patientStatus"] = "carrier"
+    json["country"] = "il"
+    json["locations"] = locations
+    
+    guard let data = try? jsonEncoder.encode(locations) else {
+      print("Error encoding locations")
+      return
+    }
+    var request = URLRequest(url: url)
+    request.httpMethod = "POST"
+    request.httpBody = data
+    request.addValue("application/json", forHTTPHeaderField: "Content-Type")
+    request.addValue("application/json", forHTTPHeaderField: "Accept")
+    let task = session.dataTask(with: request)
+    task.resume()
   }
 }
