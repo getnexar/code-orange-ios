@@ -120,6 +120,34 @@ extension UIView {
   }
 }
 
+extension UIView {
+  func getLocalizedImage(image: UIImage?) -> UIImage? {
+    if UIView.userInterfaceLayoutDirection(for: self.semanticContentAttribute) == .rightToLeft {
+      return image?.imageFlippedForRightToLeftLayoutDirection()
+    } else {
+      return image
+    }
+  }
+}
+
+extension UIView {
+  func getCodeOrangeFullDateString(startTime: Date, endTime: Date) -> String {
+    let dateFormater = DateFormatter()
+    dateFormater.dateFormat = "HH:mm"
+    let start = dateFormater.string(from: startTime)
+    let end = dateFormater.string(from: endTime)
+    let day = startTime.weekday?.description ?? ""
+    // should be localized
+    let dayText = startTime.weekday?.description != nil ? "יום \(day) " : ""
+    // should be localized
+    dateFormater.dateFormat = "d.M"
+    let date = dateFormater.string(from: startTime)
+    // should be localized
+    let hoursText = "\(end) - \(start)"
+    return "\(dayText)\(date), \(hoursText)"
+  }
+}
+
 public struct Shadow {
   
   let size: CGSize
@@ -159,3 +187,31 @@ extension Shadow {
   }
 }
 
+enum Weekday: Int, CustomStringConvertible {
+  case sunday = 1
+  case monday = 2
+  case tuesday
+  case wednesday
+  case thursday
+  case friday
+  case saturday
+  
+  var description: String {
+    switch self {
+    case .sunday:
+      return "ראשון"
+    case .monday:
+      return "שני"
+    case .tuesday:
+      return "שלישי"
+    case .wednesday:
+      return "רביעי"
+    case .thursday:
+      return "חמישי"
+    case .friday:
+      return "שישי"
+    case .saturday:
+      return "שבת"
+    }
+  }
+}

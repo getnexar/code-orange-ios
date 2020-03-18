@@ -8,19 +8,21 @@
 
 import Foundation
 import UIKit
+import CoreLocation
 
 protocol VisitedLocationsPanelDelegate: class {
   func visitedLocationsPanelCallEmergency()
   func visitedLocationsPanelOpenHealthAdministrationWebsite()
-  func visitedLocationsDidSelectLocation(_ location: CoronaLocation)
+  func visitedLocationsDidSelectLocation(_ location: CLLocationCoordinate2D)
 }
 
 class VisitedLocationsPanel: UIView {
   
   public weak var delegate: VisitedLocationsPanelDelegate? {
     didSet {
-      let selectedLocation = locations[currentLocationIndex].infectedLocation.location
-      delegate?.visitedLocationsDidSelectLocation(selectedLocation)
+      let selectedLocation = locations[currentLocationIndex].infectedLocation
+      let coordinates = CLLocationCoordinate2DMake(selectedLocation.lat, selectedLocation.lon)
+      delegate?.visitedLocationsDidSelectLocation(coordinates)
     }
   }
   private var currentLocationIndex = 0
@@ -123,12 +125,6 @@ class VisitedLocationsPanel: UIView {
     label.font = UIFont.boldSystemFont(ofSize: 16)
     return label
   }()
-  
-  private lazy var timeFormatter: DateFormatter = {
-    let dateFormater = DateFormatter()
-    dateFormater.dateFormat = "HH:MM"
-    return dateFormater
-  }()
 
   private lazy var timeframeLabel: UILabel = {
     let label = UILabel()
@@ -193,7 +189,7 @@ class VisitedLocationsPanel: UIView {
     if currentLocationIndex < 0 {
       currentLocationIndex = locations.count - 1
     }
-    delegate?.visitedLocationsDidSelectLocation(locations[currentLocationIndex].infectedLocation.location)
+    delegate?.visitedLocationsDidSelectLocation(locations[currentLocationIndex].infectedLocation.coordinates)
     reloadData()
   }
 
@@ -202,21 +198,20 @@ class VisitedLocationsPanel: UIView {
     if currentLocationIndex >= locations.count {
       currentLocationIndex = 0
     }
-    delegate?.visitedLocationsDidSelectLocation(locations[currentLocationIndex].infectedLocation.location)
+    delegate?.visitedLocationsDidSelectLocation(locations[currentLocationIndex].infectedLocation.coordinates)
     reloadData()
   }
   
   private func reloadData() {
     let hasSingleLocation = locations.count < 2
     let currentLocation = locations[currentLocationIndex]
-    let startTime = timeFormatter.string(from: currentLocation.userLocation.startTime)
-    let endTime = timeFormatter.string(from: currentLocation.userLocation.endTime)
-    timeframeLabel.text = "\(startTime) - \(endTime)"
+    timeframeLabel.text = getCodeOrangeFullDateString(startTime: currentLocation.userLocation.startTime,
+                                                      endTime: currentLocation.userLocation.endTime)
     pagesLabel.text = "\(currentLocationIndex + 1)/\(locations.count)"
     leftPageButton.isHidden = hasSingleLocation
     rightPageButton.isHidden = hasSingleLocation
     pagesLabel.isHidden = hasSingleLocation
-    addressLabel.text = currentLocation.infectedLocation.address ?? currentLocation.userLocation.address
+    addressLabel.text = currentLocation.infectedLocation.name
   }
 }
 
@@ -234,15 +229,5 @@ private class HorizontalPaddingStackView: UIStackView {
   }
   required init(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
-  }
-}
-
-extension UIView {
-  func getLocalizedImage(image: UIImage?) -> UIImage? {
-    if UIView.userInterfaceLayoutDirection(for: self.semanticContentAttribute) == .rightToLeft {
-      return image?.imageFlippedForRightToLeftLayoutDirection()
-    } else {
-      return image
-    }
   }
 }

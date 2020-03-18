@@ -8,56 +8,66 @@
 
 import Foundation
 
+protocol DataFetcher {
+  func updateInfectedLocations()
+  func getInfectedLocations() -> [COLocation]
+}
+
 class Communicator {
-  func getServerResults() -> [RecordedLocation]? {
-    let stringData = getFromAPI()
-    guard let data = stringData.data(using: .utf8, allowLossyConversion: false) else {
-      return nil
+  private let session: URLSession
+  private let serverUrl = "http://ec2-52-23-173-222.compute-1.amazonaws.com:8080/v1/events/covid-19/locations?patient_status=carrier&country=il"
+
+  private lazy var jsonDecoder: JSONDecoder = {
+    let jsonDecoder = JSONDecoder()
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+    jsonDecoder.dateDecodingStrategy = .formatted(dateFormatter)
+    return jsonDecoder
+  }()
+
+  private let queue = DispatchQueue(label: "CommunicatorReadWrite.queue", attributes: .concurrent)
+
+  private var infectedLocations = [COLocation]()
+
+  init(session: URLSession = .shared) {
+    self.session = session
+
+    updateInfectedLocations()
+  }
+
+  private func notifyDownloadCompleted() {
+    let downloadCompleted = Notification.Name("downloadCompleted")
+    DispatchQueue.main.async {
+      NotificationCenter.default.post(name: downloadCompleted, object: nil)
     }
-    
-    guard let serverRecorededLocations = decode(data: data) else { return nil }
-    let recordedLocations = serverRecorededLocations.compactMap { RecordedLocation(serverLocation: $0)}
-    return recordedLocations
-  }
-  
-  // TEMP - remove this
-  func getUserData() -> [RecordedLocation]? {
-    let stringData = getFromStorage()
-    guard let data = stringData.data(using: .utf8, allowLossyConversion: false) else {
-      return nil
-    }
-    
-    guard let serverRecorededLocations = decode(data: data) else { return nil }
-    let recordedLocations = serverRecorededLocations.compactMap { RecordedLocation(serverLocation: $0)}
-    return recordedLocations
-  }
-  
-  func decode(data: Data) -> [ServerRecordedLocation]? {
-    let decoder = JSONDecoder()
-    let decodedData: [String: [ServerRecordedLocation]]
-    do {
-      try decodedData = decoder.decode([String: [ServerRecordedLocation]].self, from: data)
-    } catch {
-      print("This Shouldn't happen: \(error)")
-      return nil
-    }
-    return decodedData["locations"]
-  }
-  
-  // this is temp implementation, until we connect with the api
-  private func getFromAPI() -> String {
-//    return StaticData.serverData
-    return StaticData.newServerData
-  }
-  
-  private func getFromStorage() -> String {
-    return StaticData.userData
   }
 }
 
-extension String {
-    func toJSON() -> Any? {
-        guard let data = self.data(using: .utf8, allowLossyConversion: false) else { return nil }
-        return try? JSONSerialization.jsonObject(with: data, options: .mutableContainers)
-    }
+extension Communicator: DataFetcher {
+  func updateInfectedLocations() {
+    guard let url = URL(string: serverUrl) else { return }
+
+    session.dataTask(with: url) { [weak self] data, response, error in
+      if let data = data {
+        do {
+          guard let self = self else { return }
+          let res = try self.jsonDecoder.decode(COLocations.self, from: data)
+
+          self.queue.sync(flags: .barrier) {
+            self.infectedLocations = res.locations ?? []
+          }
+
+          print("Downloaded \(self.infectedLocations.count) infected locations")
+          // TODO: Replace with delegate pattern to notify data consumers
+          self.notifyDownloadCompleted()
+        } catch let error {
+          print("Fetching data failed with error: \(error)")
+        }
+      }
+    }.resume()
+  }
+
+  func getInfectedLocations() -> [COLocation] {
+      queue.sync { return infectedLocations }
+  }
 }

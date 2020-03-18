@@ -24,7 +24,7 @@ class MainViewController: UIViewController {
     (UIApplication.shared.delegate as? AppDelegate)?.locationsProvider
   }
   private var markers = [GMSMarker]()
-  private var matchedLocationsToMarkers: [CoronaLocation: CodeOrangeMarker]?
+  private var matchedLocationsToMarkers: [CLLocationCoordinate2D: CodeOrangeMarker]?
   private var visitedLocationsPanel: VisitedLocationsPanel?
 
   private var locations: Locations? {
@@ -143,6 +143,15 @@ class MainViewController: UIViewController {
     let location = currentLocationProvider?.currentLocation ?? MainViewController.defaultLocation
     let mapView = GMSMapView(frame: .zero, camera: GMSCameraPosition(target: location, zoom: MainViewController.initialZoomLevel))
     mapView.delegate = self
+    do {
+      if let styleURL = Bundle.main.url(forResource: "style", withExtension: "json") {
+        mapView.mapStyle = try GMSMapStyle(contentsOfFileURL: styleURL)
+      } else {
+        print("Unable to find style.json")
+      }
+    } catch {
+      print("map style failed to load. \(error)")
+    }
     return mapView
   }()
   
@@ -223,8 +232,13 @@ class MainViewController: UIViewController {
     view.addSubview(drawerView)
     mainStack.pin(to: view, anchors: [.leading(0), .trailing(0), .top(28), .bottom(0)])
     drawerView.pin(to: view, anchors: [.leading(0), .trailing(0), .bottom(-24)])
+
+    NotificationCenter.default.addObserver(self,
+                                           selector: #selector(getFreshLocations),
+                                           name: NSNotification.Name("downloadCompleted"),
+                                           object: nil)
   }
-  
+
   override func viewDidAppear(_ animated: Bool) {
     super.viewDidAppear(animated)
     getFreshLocations()
@@ -241,7 +255,7 @@ class MainViewController: UIViewController {
     return insets
   }
   
-  private func getFreshLocations() {
+  @objc private func getFreshLocations() {
     locations = locationsProvider?.getLocations()
   }
   
@@ -263,7 +277,7 @@ class MainViewController: UIViewController {
       return
     }
     
-    matchedLocationsToMarkers = [CoronaLocation: CodeOrangeMarker]()
+    matchedLocationsToMarkers = [CLLocationCoordinate2D: CodeOrangeMarker]()
     locations.matchedLocations.forEach { matchedLocation in
       addInfectedMatchedMarker(infectedLocation: matchedLocation.infectedLocation)
       addUserMatchedMarker(userLocation: matchedLocation.userLocation)
@@ -272,14 +286,14 @@ class MainViewController: UIViewController {
     drawerContent = .visitedLocationsPanel
   }
   
-  private func addInfectedMatchedMarker(infectedLocation: RecordedLocation) {
+  private func addInfectedMatchedMarker(infectedLocation: COLocation) {
     let marker = addCircleMarker(recordedLocation: infectedLocation, type: .matched)
-    matchedLocationsToMarkers?[infectedLocation.location] = marker
+    matchedLocationsToMarkers?[infectedLocation.coordinates] = marker
   }
   
-  private func addUserMatchedMarker(userLocation: RecordedLocation) {
-    let marker = CodeOrangeMarker(startTime: userLocation.startTime, endTime: userLocation.endTime, address: userLocation.address, type: .pastUserLocation)
-    marker.position = CLLocationCoordinate2D(latitude: userLocation.location.lat, longitude: userLocation.location.lon)
+  private func addUserMatchedMarker(userLocation: COLocation) {
+    let marker = CodeOrangeMarker(startTime: userLocation.startTime, endTime: userLocation.endTime, address: userLocation.name, type: .pastUserLocation)
+    marker.position = CLLocationCoordinate2D(latitude: userLocation.lat, longitude: userLocation.lon)
     marker.map = mapView
     markers.append(marker)
   }
@@ -291,15 +305,14 @@ class MainViewController: UIViewController {
       addCircleMarker(recordedLocation: infectedLocation, type: .infected)
     }
   }
-  
-  
-  @discardableResult private func addCircleMarker(recordedLocation: RecordedLocation, type: MarkerType) -> CodeOrangeMarker {
+    
+  @discardableResult private func addCircleMarker(recordedLocation: COLocation, type: MarkerType) -> CodeOrangeMarker {
     let marker = CodeOrangeMarker(startTime: recordedLocation.startTime,
                                   endTime: recordedLocation.endTime,
-                                  address: recordedLocation.address,
+                                  address: recordedLocation.name,
                                   type: type)
     marker.groundAnchor = CGPoint(x: 0.5, y: 0.5)
-    marker.position = CLLocationCoordinate2D(latitude: recordedLocation.location.lat, longitude: recordedLocation.location.lon)
+    marker.position = CLLocationCoordinate2D(latitude: recordedLocation.lat, longitude: recordedLocation.lon)
     marker.map = mapView
     markers.append(marker)
     return marker
@@ -384,9 +397,9 @@ extension MainViewController: ChagneStatusViewDelegate {
 }
 
 extension MainViewController: VisitedLocationsPanelDelegate {
-  func visitedLocationsDidSelectLocation(_ location: CoronaLocation) {
+  func visitedLocationsDidSelectLocation(_ location: CLLocationCoordinate2D) {
     selectedMarker = matchedLocationsToMarkers?[location]
-    let coordinate = CLLocationCoordinate2D(latitude: location.lat, longitude: location.lon)
+    let coordinate = CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude)
     let cameraUpdate = GMSCameraUpdate.setTarget(coordinate, zoom: 16)
     mapView.animate(with: cameraUpdate)
   }

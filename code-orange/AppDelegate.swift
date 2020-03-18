@@ -18,10 +18,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   let locationService = LocationService.shared
   let storageService = StorageService.shared
 
+  let communicator = Communicator()
+
   public lazy var locationsProvider: LocationsProvider = {
     let locationsMatcher = LocationMatcher(matchingTimeThreshold: 30.minutes,
     mathcingDistanceThresholdInMeters: 30)
-    return LocationsProvider(locationMatcher: locationsMatcher)
+    return LocationsProvider(locationMatcher: locationsMatcher, dataFetcher: communicator)
   }()
   
   func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
@@ -40,12 +42,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     UIApplication.shared.applicationIconBadgeNumber = 0
 
+    UIApplication.shared.setMinimumBackgroundFetchInterval(60.minutes)
+
     if !locationService.isUpdatingLocation {
       locationService.startUpdatingLocation()
     }
 
     return true
   }
+
+  func application(_ application: UIApplication,
+                   performFetchWithCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+    // TODO: Manage differential data fetch and call the completion handler correspondingly
+    communicator.updateInfectedLocations()
+    completionHandler(.newData)
+  }
+
 }
 
 private extension Double {
