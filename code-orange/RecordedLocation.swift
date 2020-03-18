@@ -9,7 +9,15 @@ import Foundation
 import CoreLocation
 
 let RADIUS_CONST = 30
-let dataFormatter = ISO8601DateFormatter()
+let dateFormatter = DateFormatter.iSO8601DateWithMillisec
+
+extension DateFormatter {
+  static var iSO8601DateWithMillisec: DateFormatter {
+    let dateFormatter = DateFormatter()
+    dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
+    return dateFormatter
+  }
+}
 
 struct ServerRecordedLocation: Equatable, Codable {
   var lat: CLLocationDegrees
@@ -17,17 +25,22 @@ struct ServerRecordedLocation: Equatable, Codable {
   var startTime: String
   var endTime: String
   var radius: Int
+  var name: String?
+  var comments: String?
   
   init(lat: CLLocationDegrees,
        lon: CLLocationDegrees,
        startTime: String,
        endTime: String,
-       radius: Int) {
+       radius: Int,
+       name: String?,
+       comments: String?) {
     self.lat = lat
     self.lon = lon
     self.startTime = startTime
     self.endTime = endTime
-    self.radius = RADIUS_CONST
+    self.radius = radius
+    self.name = name
   }
 }
 
@@ -41,13 +54,14 @@ struct RecordedLocation: Equatable, Codable {
 extension RecordedLocation {
   init?(serverLocation: ServerRecordedLocation) {
     self.location = CoronaLocation(lat: serverLocation.lat, lon: serverLocation.lon)
-    guard let startTime = dataFormatter.date(from: serverLocation.startTime),
-      let endTime = dataFormatter.date(from: serverLocation.endTime) else {
+    guard let startTime = dateFormatter.date(from: serverLocation.startTime),
+      let endTime = dateFormatter.date(from: serverLocation.endTime) else {
         return nil
     }
     
     self.startTime = startTime
     self.endTime = endTime
+    self.address = serverLocation.name
   }
   
   func isLocationColliding(with otherRecordedLocation: RecordedLocation,

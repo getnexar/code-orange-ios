@@ -38,7 +38,7 @@ class Communicator {
     do {
       try decodedData = decoder.decode([String: [ServerRecordedLocation]].self, from: data)
     } catch {
-      print("This Shouldn't happen")
+      print("This Shouldn't happen: \(error)")
       return nil
     }
     return decodedData["locations"]
@@ -46,7 +46,8 @@ class Communicator {
   
   // this is temp implementation, until we connect with the api
   private func getFromAPI() -> String {
-    return StaticData.serverData
+//    return StaticData.serverData
+    return StaticData.newShortData
   }
   
   private func getFromStorage() -> String {
