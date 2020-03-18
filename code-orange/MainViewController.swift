@@ -230,14 +230,14 @@ class MainViewController: UIViewController {
     drawerContent = .visitedLocationsPanel
   }
   
-  private func addInfectedMatchedMarker(infectedLocation: RecordedLocation) {
+  private func addInfectedMatchedMarker(infectedLocation: COLocation) {
     addCircleMarker(recordedLocation: infectedLocation, type: .matched)
   }
   
-  private func addUserMatchedMarker(userLocation: RecordedLocation) {
-    let marker = CodeOrangeMarker(startTime: userLocation.startTime, endTime: userLocation.endTime, address: userLocation.address)
+  private func addUserMatchedMarker(userLocation: COLocation) {
+    let marker = CodeOrangeMarker(startTime: userLocation.startTime, endTime: userLocation.endTime, address: userLocation.name)
     marker.icon = MarkerType.pastUserLocation.image
-    marker.position = CLLocationCoordinate2D(latitude: userLocation.location.lat, longitude: userLocation.location.lon)
+    marker.position = CLLocationCoordinate2D(latitude: userLocation.lat, longitude: userLocation.lon)
     marker.map = mapView
     markers.append(marker)
   }
@@ -250,13 +250,13 @@ class MainViewController: UIViewController {
     }
   }
   
-  private func addCircleMarker(recordedLocation: RecordedLocation, type: MarkerType) {
+  private func addCircleMarker(recordedLocation: COLocation, type: MarkerType) {
     let marker = CodeOrangeMarker(startTime: recordedLocation.startTime,
                                   endTime: recordedLocation.endTime,
-                                  address: recordedLocation.address)
+                                  address: recordedLocation.name)
     marker.icon = type.image
     marker.groundAnchor = CGPoint(x: 0.5, y: 0.5)
-    marker.position = CLLocationCoordinate2D(latitude: recordedLocation.location.lat, longitude: recordedLocation.location.lon)
+    marker.position = CLLocationCoordinate2D(latitude: recordedLocation.lat, longitude: recordedLocation.lon)
     marker.map = mapView
     markers.append(marker)
   }
@@ -343,7 +343,7 @@ extension MainViewController: ChagneStatusViewDelegate {
 
 extension MainViewController: VisitedLocationsPanelDelegate {
   func visitedLocationsDidSelectLocation(_ location: MatchedLocation) {
-    let coordinate = CLLocationCoordinate2D(latitude: location.userLocation.location.lat, longitude: location.userLocation.location.lon)
+    let coordinate = CLLocationCoordinate2D(latitude: location.userLocation.lat, longitude: location.userLocation.lon)
     let cameraUpdate = GMSCameraUpdate.setTarget(coordinate, zoom: 16)
     mapView.animate(with: cameraUpdate)
   }

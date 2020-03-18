@@ -211,7 +211,7 @@ class VisitedLocationsPanel: UIView {
     leftPageButton.isHidden = hasSingleLocation
     rightPageButton.isHidden = hasSingleLocation
     pagesLabel.isHidden = hasSingleLocation
-    addressLabel.text = currentLocation.infectedLocation.address ?? currentLocation.userLocation.address
+    addressLabel.text = currentLocation.infectedLocation.name
   }
 }
 

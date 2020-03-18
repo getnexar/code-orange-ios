@@ -11,7 +11,7 @@ import CoreLocation
 
 struct Locations {
   var matchedLocations: [MatchedLocation]
-  var otherLocations: [RecordedLocation]
+  var otherLocations: [COLocation]
 }
 
 class LocationsProvider {
@@ -39,35 +39,40 @@ class LocationsProvider {
     return Locations(matchedLocations: matchingLocations, otherLocations: coronaNotMatchingLocations)
   }
 
-  private func getStoredCoronaLocations() -> [RecordedLocation]? {
-    let infectedLocation = dataFetcher.getInfectedLocations()
-    let recordedLocations = infectedLocation.compactMap { RecordedLocation(serverLocation: $0)}
-    return recordedLocations
+  private func getStoredCoronaLocations() -> [COLocation]? {
+    return dataFetcher.getInfectedLocations()
   }
   
-  private func getStoredUserLocations() -> [RecordedLocation]? {
+  private func getStoredUserLocations() -> [COLocation]? {
     let zones = StorageService.shared.getUserLocations()
-    var recordedLocations = [RecordedLocation]()
+    var userLocations = [COLocation]()
 
     zones.forEach { zone in
-      let location = CoronaLocation(lat: zone.latitude, lon: zone.longitude)
-      // TODO: Validate the date
-      let startTime = zone.startTime ?? Date(timeIntervalSince1970: 0.0)
-      let endTime = zone.endTime ?? Date(timeIntervalSince1970: 0.0)
-      let recordedLocation = RecordedLocation(location: location, startTime: startTime, endTime: endTime)
-      recordedLocations.append(recordedLocation)
+      let location = COLocation(lat: zone.latitude,
+                                lon: zone.longitude,
+                                startTime: zone.startTime ?? Date(timeIntervalSince1970: 0.0),
+                                endTime: zone.endTime ?? Date(timeIntervalSince1970: 0.0),
+                                radius: 0.0,
+                                name: "",
+                                comments: "")
+      userLocations.append(location)
     }
 
-    return recordedLocations
+    return userLocations
   }
 }
 
 extension LocationsProvider {
   public func doesCoronaLocationsContain(location: CLLocation, date: Date) -> Bool {
-    let newLocation = RecordedLocation(location: CoronaLocation(lat: location.coordinate.latitude,
-                                                                lon: location.coordinate.longitude),
-                                       startTime: date,
-                                       endTime: date)
+    let startTime = Calendar.current.date(byAdding: .minute, value: -15, to: date)
+    let endTime = Calendar.current.date(byAdding: .minute, value: 15, to: date)
+    let newLocation = COLocation(lat: location.coordinate.latitude,
+                                 lon: location.coordinate.longitude,
+                                 startTime: startTime ?? Date(timeIntervalSince1970: 0.0),
+                                 endTime: endTime ?? Date(timeIntervalSince1970: 0.0),
+                                 radius: 0.0,
+                                 name: "",
+                                 comments: "")
 
     guard let coronaLocations = getStoredCoronaLocations() else { return false }
 
