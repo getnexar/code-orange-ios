@@ -8,56 +8,41 @@
 
 import Foundation
 
+protocol DataFetcher {
+  func updateInfectedLocations()
+  func getInfectedLocations() -> [COLocation]
+}
+
 class Communicator {
-  func getServerResults() -> [RecordedLocation]? {
-    let stringData = getFromAPI()
-    guard let data = stringData.data(using: .utf8, allowLossyConversion: false) else {
-      return nil
-    }
-    
-    guard let serverRecorededLocations = decode(data: data) else { return nil }
-    let recordedLocations = serverRecorededLocations.compactMap { RecordedLocation(serverLocation: $0)}
-    return recordedLocations
-  }
-  
-  // TEMP - remove this
-  func getUserData() -> [RecordedLocation]? {
-    let stringData = getFromStorage()
-    guard let data = stringData.data(using: .utf8, allowLossyConversion: false) else {
-      return nil
-    }
-    
-    guard let serverRecorededLocations = decode(data: data) else { return nil }
-    let recordedLocations = serverRecorededLocations.compactMap { RecordedLocation(serverLocation: $0)}
-    return recordedLocations
-  }
-  
-  func decode(data: Data) -> [ServerRecordedLocation]? {
-    let decoder = JSONDecoder()
-    let decodedData: [String: [ServerRecordedLocation]]
-    do {
-      try decodedData = decoder.decode([String: [ServerRecordedLocation]].self, from: data)
-    } catch {
-      print("This Shouldn't happen: \(error)")
-      return nil
-    }
-    return decodedData["locations"]
-  }
-  
-  // this is temp implementation, until we connect with the api
-  private func getFromAPI() -> String {
-//    return StaticData.serverData
-    return StaticData.newServerData
-  }
-  
-  private func getFromStorage() -> String {
-    return StaticData.userData
+  private let session: URLSession
+  private let serverUrl = "http://ec2-52-23-173-222.compute-1.amazonaws.com:8080/v1/events/covid-19/locations?patient_status=carrier&country=il"
+
+  private var infectedLocations = [COLocation]()
+
+  init(session: URLSession = .shared) {
+    self.session = session
+
+    updateInfectedLocations()
   }
 }
 
-extension String {
-    func toJSON() -> Any? {
-        guard let data = self.data(using: .utf8, allowLossyConversion: false) else { return nil }
-        return try? JSONSerialization.jsonObject(with: data, options: .mutableContainers)
-    }
+extension Communicator: DataFetcher {
+  func updateInfectedLocations() {
+    guard let url = URL(string: serverUrl) else { return }
+
+    session.dataTask(with: url) { [weak self] data, response, error in
+      if let data = data {
+        do {
+          let res = try JSONDecoder().decode(COLocations.self, from: data)
+          self?.infectedLocations = res.locations ?? []
+        } catch let error {
+          print("Fetching data failed with error: \(error)")
+        }
+      }
+    }.resume()
+  }
+
+  func getInfectedLocations() -> [COLocation] {
+    return infectedLocations
+  }
 }

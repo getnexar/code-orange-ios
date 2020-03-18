@@ -21,7 +21,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
   public lazy var locationsProvider: LocationsProvider = {
     let locationsMatcher = LocationMatcher(matchingTimeThreshold: 30.minutes,
     mathcingDistanceThresholdInMeters: 30)
-    return LocationsProvider(locationMatcher: locationsMatcher)
+    let communicator = Communicator()
+    return LocationsProvider(locationMatcher: locationsMatcher, dataFetcher: communicator)
   }()
   
   func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {

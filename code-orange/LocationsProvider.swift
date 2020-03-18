@@ -17,9 +17,11 @@ struct Locations {
 class LocationsProvider {
   
   private let locationMatcher: LocationMatcher
+  private let dataFetcher: DataFetcher
   
-  init(locationMatcher: LocationMatcher) {
+  init(locationMatcher: LocationMatcher, dataFetcher: DataFetcher) {
     self.locationMatcher = locationMatcher
+    self.dataFetcher = dataFetcher
   }
 
   public func getLocations() -> Locations {
@@ -38,9 +40,9 @@ class LocationsProvider {
   }
 
   private func getStoredCoronaLocations() -> [RecordedLocation]? {
-    // this is temp
-    let communicator = Communicator()
-    return communicator.getServerResults()
+    let infectedLocation = dataFetcher.getInfectedLocations()
+    let recordedLocations = infectedLocation.compactMap { RecordedLocation(serverLocation: $0)}
+    return recordedLocations
   }
   
   private func getStoredUserLocations() -> [RecordedLocation]? {

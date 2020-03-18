@@ -19,28 +19,31 @@ extension DateFormatter {
   }
 }
 
-struct ServerRecordedLocation: Equatable, Codable {
-  var lat: CLLocationDegrees
-  var lon: CLLocationDegrees
-  var startTime: String
-  var endTime: String
-  var radius: Int
-  var name: String?
-  var comments: String?
-  
-  init(lat: CLLocationDegrees,
-       lon: CLLocationDegrees,
-       startTime: String,
-       endTime: String,
-       radius: Int,
-       name: String?,
-       comments: String?) {
-    self.lat = lat
-    self.lon = lon
-    self.startTime = startTime
-    self.endTime = endTime
-    self.radius = radius
-    self.name = name
+struct COLocations: Codable {
+  let locations: [COLocation]?
+
+  private enum CodingKeys: String, CodingKey {
+    case locations
+  }
+}
+
+struct COLocation: Equatable, Codable {
+  let lat: CLLocationDegrees
+  let lon: CLLocationDegrees
+  let startTime: String
+  let endTime: String
+  let radius: Double
+  let name: String
+  let comments: String
+
+  private enum CodingKeys: String, CodingKey {
+    case lat
+    case lon
+    case startTime
+    case endTime
+    case radius
+    case name
+    case comments
   }
 }
 
@@ -52,7 +55,7 @@ struct RecordedLocation: Equatable, Codable {
 }
 
 extension RecordedLocation {
-  init?(serverLocation: ServerRecordedLocation) {
+  init?(serverLocation: COLocation) {
     self.location = CoronaLocation(lat: serverLocation.lat, lon: serverLocation.lon)
     guard let startTime = dateFormatter.date(from: serverLocation.startTime),
       let endTime = dateFormatter.date(from: serverLocation.endTime) else {

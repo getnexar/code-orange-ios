@@ -34,6 +34,7 @@
 		D25B8CAC241F637500C6DCB8 /* TLV-Test-Ride-Intinerary.gpx in Resources */ = {isa = PBXBuildFile; fileRef = D25B8CAB241F637500C6DCB8 /* TLV-Test-Ride-Intinerary.gpx */; };
 		D25B8CAE241F81BC00C6DCB8 /* StorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D25B8CAD241F81BC00C6DCB8 /* StorageService.swift */; };
 		D2B2736F2420BD0700E38EC5 /* InfectionNotifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2B2736E2420BD0700E38EC5 /* InfectionNotifier.swift */; };
+		D2B2737124212A2000E38EC5 /* CommunicatorMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2B2737024212A2000E38EC5 /* CommunicatorMock.swift */; };
 		DAEE11DFC0C433E44F174B2F /* Pods_code_orangeTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D05ABFE5D0AAECB7FA466E9 /* Pods_code_orangeTests.framework */; };
 		EBC2BDDE74924428CC46DD47 /* Pods_code_orange.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DA767D39FD6802378DBB90C6 /* Pods_code_orange.framework */; };
 /* End PBXBuildFile section */
@@ -86,6 +87,7 @@
 		D25B8CAB241F637500C6DCB8 /* TLV-Test-Ride-Intinerary.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "TLV-Test-Ride-Intinerary.gpx"; sourceTree = "<group>"; };
 		D25B8CAD241F81BC00C6DCB8 /* StorageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageService.swift; sourceTree = "<group>"; };
 		D2B2736E2420BD0700E38EC5 /* InfectionNotifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfectionNotifier.swift; sourceTree = "<group>"; };
+		D2B2737024212A2000E38EC5 /* CommunicatorMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunicatorMock.swift; sourceTree = "<group>"; };
 		DA767D39FD6802378DBB90C6 /* Pods_code_orange.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_code_orange.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -179,6 +181,7 @@
 				233B0F48241EA53000F776CC /* LocationMatcherTests.swift */,
 				7789EA8A241E532400BC92E4 /* Info.plist */,
 				233B0F4D241EB18C00F776CC /* RecordedLocationTests.swift */,
+				D2B2737024212A2000E38EC5 /* CommunicatorMock.swift */,
 			);
 			path = "code-orangeTests";
 			sourceTree = "<group>";
@@ -389,6 +392,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D2B2737124212A2000E38EC5 /* CommunicatorMock.swift in Sources */,
 				233B0F4E241EB18C00F776CC /* RecordedLocationTests.swift in Sources */,
 				7789EA89241E532400BC92E4 /* code_orangeTests.swift in Sources */,
 				233B0F4A241EA53B00F776CC /* LocationMatcherTests.swift in Sources */,
