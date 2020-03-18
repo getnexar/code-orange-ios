@@ -12,11 +12,12 @@ import GoogleMaps
 
 class MainViewController: UIViewController {
   
-  enum DrawerContent {
+  enum DrawerContent: Equatable {
     case none
     case changeStatusView
     case visitedLocationsPanel
     case infectedLocationPanel
+    case permissions(minimized: Bool)
   }
   
   public weak var currentLocationProvider: CurrentLocationProvider?
@@ -68,8 +69,11 @@ class MainViewController: UIViewController {
           print("what should I do?")
         case .visitedLocationsPanel:
           dismissMatchedLocationsPanel()
+        case .permissions(_):
+          print("what should I do?")
+          }
         }
-      }
+    
       var shouldDismissDrawer = oldValue != .none && oldValue == drawerContent
       let action: (() -> ())?
       switch drawerContent {
@@ -82,6 +86,8 @@ class MainViewController: UIViewController {
         action = self.displayInfectedLocationPanel
       case .visitedLocationsPanel:
         action = displayMatchedLocationsPanel
+      case .permissions:
+        action = displayLocationPermissionPanel
       }
       
       switchDrawerCotent(shouldDismissDrawer: shouldDismissDrawer, switchingContentAction: action)
@@ -227,6 +233,8 @@ class MainViewController: UIViewController {
   
   override func viewDidLoad() {
     super.viewDidLoad()
+    NotificationCenter.default.addObserver(self, selector: #selector(appMovedToForeground), name: UIApplication.didBecomeActiveNotification, object: nil)
+    
     view.backgroundColor = .white
     view.addSubview(mainStack)
     view.addSubview(drawerView)
@@ -238,10 +246,9 @@ class MainViewController: UIViewController {
                                            name: NSNotification.Name("downloadCompleted"),
                                            object: nil)
   }
-
   override func viewDidAppear(_ animated: Bool) {
     super.viewDidAppear(animated)
-    getFreshLocations()
+    refreshLocation()
   }
   
   private func getLocalizedInsets(top: CGFloat, left: CGFloat, bottom: CGFloat, right: CGFloat) -> UIEdgeInsets {
@@ -358,6 +365,26 @@ class MainViewController: UIViewController {
     visitedLocationsPanel = nil
   }
   
+  private func displayLocationPermissionPanel() {
+    guard case let .permissions(minimized) = drawerContent else {
+      return
+    }
+    if let existingPanel = drawerView.contentView as? LocationPermissionPanel {
+      UIView.animate(withDuration: 0.4) {
+        existingPanel.isMinimized = minimized
+      }
+      showDrawer()
+      return
+    }
+    
+    let panel = LocationPermissionPanel()
+    panel.translatesAutoresizingMaskIntoConstraints = false
+    panel.delegate = self
+    panel.isMinimized = minimized
+    drawerView.contentView = panel
+    showDrawer()
+  }
+  
   private func showDrawer() {
     self.drawerView.isHidden = false
   }
@@ -377,6 +404,29 @@ class MainViewController: UIViewController {
     shareLocationView.fillSuperview()
     shareLocationView.delegate = self
     self.shareLocationView = shareLocationView
+  }
+  
+  private func refreshLocation() {
+    switch CLLocationManager.authorizationStatus() {
+    case .authorizedAlways:
+      getFreshLocations()
+      mapView.isMyLocationEnabled = true
+      if case .permissions = drawerContent {
+        drawerContent = .none
+      }
+    case .notDetermined:
+      mapView.isMyLocationEnabled = false
+      drawerContent = .permissions(minimized: false)
+    case .authorizedWhenInUse, .denied, .restricted:
+      mapView.isMyLocationEnabled = false
+      drawerContent = .permissions(minimized: true)
+    @unknown default:
+      return
+    }
+  }
+  
+  @objc private func appMovedToForeground() {
+    refreshLocation()
   }
 }
 
@@ -410,6 +460,47 @@ extension MainViewController: VisitedLocationsPanelDelegate {
   
   func visitedLocationsPanelOpenHealthAdministrationWebsite() {
     drawerContent = .none
+  }
+}
+
+extension MainViewController: LocationPermissionPanelDelegate {
+  func locationPermissionSwitchToSettings() {
+    guard CLLocationManager.authorizationStatus() != .notDetermined else {
+      drawerContent = .permissions(minimized: false)
+      return
+    }
+    guard let url = URL(string:UIApplication.openSettingsURLString) else { return}
+    UIApplication.shared.open(url)
+  }
+  
+  func locationPermissionAuthorized() {
+    (UIApplication.shared.delegate as? AppDelegate)?.startLocationTracking()
+    drawerContent = .none
+  }
+  
+  func locationPermissionNotAuthorized() {
+    drawerContent = .permissions(minimized: true)
+  }
+  
+  func locationPermissionMaximized() {
+    // TODO: apply dark shade on view
+  }
+}
+
+class CircleMarkerView: UIView {
+  init(color: UIColor) {
+    super.init(frame: .zero)
+    translatesAutoresizingMaskIntoConstraints = false
+    backgroundColor = color
+    alpha = 0.4
+    setAutoLayoutWidth(30)
+    setSquareRatio()
+    layer.masksToBounds = true
+    cornerRadius = 15
+  }
+  
+  required init?(coder aDecoder: NSCoder) {
+    fatalError("init(coder:) has not been implemented")
   }
 }
 

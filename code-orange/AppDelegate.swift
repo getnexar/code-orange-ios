@@ -44,11 +44,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     UIApplication.shared.setMinimumBackgroundFetchInterval(60.minutes)
 
+    return true
+  }
+
+  public func startLocationTracking() {
     if !locationService.isUpdatingLocation {
       locationService.startUpdatingLocation()
     }
-
-    return true
   }
 
   func application(_ application: UIApplication,

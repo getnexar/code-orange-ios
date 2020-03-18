@@ -15,7 +15,7 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "7789EA6A241E532400BC92E4"
-               BuildableName = "code-orange.app"
+               BuildableName = "Code Orange.app"
                BlueprintName = "code-orange"
                ReferencedContainer = "container:code-orange.xcodeproj">
             </BuildableReference>
@@ -45,7 +45,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "7789EA6A241E532400BC92E4"
-            BuildableName = "code-orange.app"
+            BuildableName = "Code Orange.app"
             BlueprintName = "code-orange"
             ReferencedContainer = "container:code-orange.xcodeproj">
          </BuildableReference>
@@ -62,7 +62,7 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "7789EA6A241E532400BC92E4"
-            BuildableName = "code-orange.app"
+            BuildableName = "Code Orange.app"
             BlueprintName = "code-orange"
             ReferencedContainer = "container:code-orange.xcodeproj">
          </BuildableReference>
