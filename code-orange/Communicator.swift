@@ -32,6 +32,13 @@ class Communicator {
 
     updateInfectedLocations()
   }
+
+  private func notifyConsumers() {
+    let downloadCompleted = Notification.Name("downloadCompleted")
+    DispatchQueue.main.async {
+      NotificationCenter.default.post(name: downloadCompleted, object: nil)
+    }
+  }
 }
 
 extension Communicator: DataFetcher {
@@ -44,6 +51,8 @@ extension Communicator: DataFetcher {
           guard let self = self else { return }
           let res = try self.jsonDecoder.decode(COLocations.self, from: data)
           self.infectedLocations = res.locations ?? []
+          print("Downloaded \(self.infectedLocations.count) infected locations")
+          self.notifyConsumers()
         } catch let error {
           print("Fetching data failed with error: \(error)")
         }

@@ -187,8 +187,13 @@ class MainViewController: UIViewController {
     view.addSubview(drawerView)
     mainStack.pin(to: view, anchors: [.leading(0), .trailing(0), .top(28), .bottom(0)])
     drawerView.pin(to: view, anchors: [.leading(0), .trailing(0), .bottom(-24)])
+
+    NotificationCenter.default.addObserver(self,
+                                           selector: #selector(getFreshLocations),
+                                           name: NSNotification.Name("downloadCompleted"),
+                                           object: nil)
   }
-  
+
   override func viewDidAppear(_ animated: Bool) {
     super.viewDidAppear(animated)
     getFreshLocations()
@@ -205,7 +210,7 @@ class MainViewController: UIViewController {
     return insets
   }
   
-  private func getFreshLocations() {
+  @objc private func getFreshLocations() {
     locations = locationsProvider?.getLocations()
   }
   
