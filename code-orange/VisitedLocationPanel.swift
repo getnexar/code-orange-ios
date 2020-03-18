@@ -8,16 +8,23 @@
 
 import Foundation
 import UIKit
+import CoreLocation
 
 protocol VisitedLocationsPanelDelegate: class {
   func visitedLocationsPanelCallEmergency()
   func visitedLocationsPanelOpenHealthAdministrationWebsite()
-  func visitedLocationsDidSelectLocation(_ location: MatchedLocation)
+  func visitedLocationsDidSelectLocation(_ location: CLLocationCoordinate2D)
 }
 
 class VisitedLocationsPanel: UIView {
   
-  public weak var delegate: VisitedLocationsPanelDelegate?
+  public weak var delegate: VisitedLocationsPanelDelegate? {
+    didSet {
+      let selectedLocation = locations[currentLocationIndex].infectedLocation
+      let coordinates = CLLocationCoordinate2DMake(selectedLocation.lat, selectedLocation.lon)
+      delegate?.visitedLocationsDidSelectLocation(coordinates)
+    }
+  }
   private var currentLocationIndex = 0
   private var locations: [MatchedLocation]
 
@@ -118,12 +125,6 @@ class VisitedLocationsPanel: UIView {
     label.font = UIFont.boldSystemFont(ofSize: 16)
     return label
   }()
-  
-  private lazy var timeFormatter: DateFormatter = {
-    let dateFormater = DateFormatter()
-    dateFormater.dateFormat = "HH:MM"
-    return dateFormater
-  }()
 
   private lazy var timeframeLabel: UILabel = {
     let label = UILabel()
@@ -158,7 +159,7 @@ class VisitedLocationsPanel: UIView {
   private lazy var healthAdministrationWebsiteButton: UIButton = {
     let button = UIButton()
     button.backgroundColor = .nxOrange
-    button.setTitleColor(.black, for: .normal)
+    button.setTitleColor(.nxGrey90, for: .normal)
     button.setTitle("אתר משרד הבריאות", for: .normal)
     button.titleLabel?.font = UIFont.systemFont(ofSize: 14)
     button.addTarget(self, action: #selector(healthAdministrationWebsiteButtonTapped), for: .touchUpInside)
@@ -168,7 +169,7 @@ class VisitedLocationsPanel: UIView {
   private lazy var callEmergencyServiceButton: UIButton = {
     let button = UIButton()
     button.backgroundColor = .nxOrange
-    button.setTitleColor(.black, for: .normal)
+    button.setTitleColor(.nxGrey90, for: .normal)
     button.setTitle("התקשר 101", for: .normal)
     button.titleLabel?.font = UIFont.systemFont(ofSize: 14)
     button.addTarget(self, action: #selector(callEmergencyServiceButtonTapped), for: .touchUpInside)
@@ -188,7 +189,7 @@ class VisitedLocationsPanel: UIView {
     if currentLocationIndex < 0 {
       currentLocationIndex = locations.count - 1
     }
-    delegate?.visitedLocationsDidSelectLocation(locations[currentLocationIndex])
+    delegate?.visitedLocationsDidSelectLocation(locations[currentLocationIndex].infectedLocation.coordinates)
     reloadData()
   }
 
@@ -197,16 +198,15 @@ class VisitedLocationsPanel: UIView {
     if currentLocationIndex >= locations.count {
       currentLocationIndex = 0
     }
-    delegate?.visitedLocationsDidSelectLocation(locations[currentLocationIndex])
+    delegate?.visitedLocationsDidSelectLocation(locations[currentLocationIndex].infectedLocation.coordinates)
     reloadData()
   }
   
   private func reloadData() {
     let hasSingleLocation = locations.count < 2
     let currentLocation = locations[currentLocationIndex]
-    let startTime = timeFormatter.string(from: currentLocation.userLocation.startTime)
-    let endTime = timeFormatter.string(from: currentLocation.userLocation.endTime)
-    timeframeLabel.text = "\(startTime) - \(endTime)"
+    timeframeLabel.text = getCodeOrangeFullDateString(startTime: currentLocation.userLocation.startTime,
+                                                      endTime: currentLocation.userLocation.endTime)
     pagesLabel.text = "\(currentLocationIndex + 1)/\(locations.count)"
     leftPageButton.isHidden = hasSingleLocation
     rightPageButton.isHidden = hasSingleLocation
@@ -229,15 +229,5 @@ private class HorizontalPaddingStackView: UIStackView {
   }
   required init(coder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
-  }
-}
-
-extension UIView {
-  func getLocalizedImage(image: UIImage?) -> UIImage? {
-    if UIView.userInterfaceLayoutDirection(for: self.semanticContentAttribute) == .rightToLeft {
-      return image?.imageFlippedForRightToLeftLayoutDirection()
-    } else {
-      return image
-    }
   }
 }

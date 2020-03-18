@@ -63,3 +63,21 @@ extension COLocation {
     return didFindMatch
   }
 }
+
+extension COLocation {
+  var coordinates: CLLocationCoordinate2D {
+    return CLLocationCoordinate2DMake(lat, lon)
+  }
+}
+
+extension CLLocationCoordinate2D: Equatable, Hashable {
+  
+  public static func == (lhs: Self, rhs: Self) -> Bool {
+    return lhs.longitude == rhs.longitude && lhs.latitude == rhs.latitude
+  }
+  
+  public func hash(into hasher: inout Hasher) {
+    hasher.combine(latitude)
+    hasher.combine(longitude)
+  }
+}

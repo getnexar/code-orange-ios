@@ -36,15 +36,13 @@ class InfectedLocationView: UIView {
   
   private lazy var timeFormatter: DateFormatter = {
     let dateFormater = DateFormatter()
-    dateFormater.dateFormat = "HH:MM"
+    dateFormater.dateFormat = "HH:mm"
     return dateFormater
   }()
   
   private lazy var timeLabel: UILabel = {
     let lbl = UILabel(frame: .zero)
-    let start = timeFormatter.string(from: startTime)
-    let end = timeFormatter.string(from: endTime)
-    lbl.text = "\(start) - \(end)"
+    lbl.text = getCodeOrangeFullDateString(startTime: startTime, endTime: endTime)
     lbl.numberOfLines = 0
     lbl.textAlignment = .natural
     lbl.textColor = .nxGrey70
@@ -75,4 +73,12 @@ class InfectedLocationView: UIView {
     stackView.spacing = 5
     return stackView
   }()
+}
+
+extension Date {
+  var weekday: Weekday? {
+    let myCalendar = Calendar(identifier: .gregorian)
+    let weekDay = myCalendar.component(.weekday, from: self)
+    return Weekday(rawValue: weekDay)
+  }
 }

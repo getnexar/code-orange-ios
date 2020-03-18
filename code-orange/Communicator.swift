@@ -38,6 +38,7 @@ class Communicator {
     return jsonEncoder
   }()
   
+  private let queue = DispatchQueue(label: "CommunicatorReadWrite.queue", attributes: .concurrent)
   private var infectedLocations = [COLocation]()
 
   init(session: URLSession = .shared) {
@@ -45,7 +46,7 @@ class Communicator {
     updateInfectedLocations()
   }
 
-  private func notifyConsumers() {
+  private func notifyDownloadCompleted() {
     let downloadCompleted = Notification.Name("downloadCompleted")
     DispatchQueue.main.async {
       NotificationCenter.default.post(name: downloadCompleted, object: nil)
@@ -62,9 +63,14 @@ extension Communicator: DataFetcher {
         do {
           guard let self = self else { return }
           let res = try self.jsonDecoder.decode(COLocations.self, from: data)
-          self.infectedLocations = res.locations ?? []
+
+          self.queue.sync(flags: .barrier) {
+            self.infectedLocations = res.locations ?? []
+          }
+
           print("Downloaded \(self.infectedLocations.count) infected locations")
-          self.notifyConsumers()
+          // TODO: Replace with delegate pattern to notify data consumers
+          self.notifyDownloadCompleted()
         } catch let error {
           print("Fetching data failed with error: \(error)")
         }
@@ -73,7 +79,7 @@ extension Communicator: DataFetcher {
   }
 
   func getInfectedLocations() -> [COLocation] {
-    return infectedLocations
+      queue.sync { return infectedLocations }
   }
 }
 
