@@ -105,3 +105,10 @@ struct CoronaLocation: Equatable, Codable {
     return self.distance(from: otherCoronaLocaion) <= collisionThresholdInMeters
   }
 }
+
+extension CoronaLocation: Hashable {
+  func hash(into hasher: inout Hasher) {
+    hasher.combine(lat)
+    hasher.combine(lon)
+  }
+}

@@ -12,12 +12,17 @@ import UIKit
 protocol VisitedLocationsPanelDelegate: class {
   func visitedLocationsPanelCallEmergency()
   func visitedLocationsPanelOpenHealthAdministrationWebsite()
-  func visitedLocationsDidSelectLocation(_ location: MatchedLocation)
+  func visitedLocationsDidSelectLocation(_ location: CoronaLocation)
 }
 
 class VisitedLocationsPanel: UIView {
   
-  public weak var delegate: VisitedLocationsPanelDelegate?
+  public weak var delegate: VisitedLocationsPanelDelegate? {
+    didSet {
+      let selectedLocation = locations[currentLocationIndex].infectedLocation.location
+      delegate?.visitedLocationsDidSelectLocation(selectedLocation)
+    }
+  }
   private var currentLocationIndex = 0
   private var locations: [MatchedLocation]
 
@@ -188,7 +193,7 @@ class VisitedLocationsPanel: UIView {
     if currentLocationIndex < 0 {
       currentLocationIndex = locations.count - 1
     }
-    delegate?.visitedLocationsDidSelectLocation(locations[currentLocationIndex])
+    delegate?.visitedLocationsDidSelectLocation(locations[currentLocationIndex].infectedLocation.location)
     reloadData()
   }
 
@@ -197,7 +202,7 @@ class VisitedLocationsPanel: UIView {
     if currentLocationIndex >= locations.count {
       currentLocationIndex = 0
     }
-    delegate?.visitedLocationsDidSelectLocation(locations[currentLocationIndex])
+    delegate?.visitedLocationsDidSelectLocation(locations[currentLocationIndex].infectedLocation.location)
     reloadData()
   }
   

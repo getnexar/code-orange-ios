@@ -24,6 +24,8 @@ class MainViewController: UIViewController {
     (UIApplication.shared.delegate as? AppDelegate)?.locationsProvider
   }
   private var markers = [GMSMarker]()
+  private var matchedLocationsToMarkers: [CoronaLocation: CodeOrangeMarker]?
+  private var visitedLocationsPanel: VisitedLocationsPanel?
 
   private var locations: Locations? {
     didSet {
@@ -33,30 +35,64 @@ class MainViewController: UIViewController {
   private static let initialZoomLevel: Float = 9
   private static let defaultLocation = CLLocationCoordinate2D(latitude: 32.086801, longitude: 34.789749)
   private var shareLocationView : ShareLocationView?
-  private var selectedMarker: CodeOrangeMarker?
+  private var selectedMarker: CodeOrangeMarker? {
+    didSet {
+      oldValue?.disSelect()
+      // we do not want to dismiss the change status view by the map
+      guard drawerContent != .changeStatusView, let marker = selectedMarker else {
+        return
+      }
+      switch marker.type {
+      case .currentUserLocation, .pastUserLocation, .selectedMatched, .selectedInfected:
+        // these types should not be making changes to selection
+        return
+      case .matched:
+        selectedMarker?.select()
+        if drawerContent != .visitedLocationsPanel {
+          drawerContent = .visitedLocationsPanel
+        }
+      case .infected:
+        selectedMarker?.select()
+        drawerContent = .infectedLocationPanel
+      }
+    }
+  }
   
   private var drawerContent: DrawerContent = .none {
     didSet {
-      switch drawerContent {
-      case .none: // dismiss drawer
-        dismissDrawer()
-      case .changeStatusView:
-        dismissDrawer() {
-          self.displayChangeStatusView()
-        }
-      case .infectedLocationPanel:
-        if oldValue == drawerContent {
-          displayInfectedLocationPanel()
-        } else {
-          dismissDrawer() {
-            self.displayInfectedLocationPanel()
-          }
-        }
-      case .visitedLocationsPanel:
-        dismissDrawer() {
-          self.displayMatchedLocationsPanel(self.locations?.matchedLocations ?? [])
+      if oldValue != drawerContent {
+        switch oldValue {
+        case .none, .changeStatusView: // dismiss drawer
+          print("old content doesn't require dismiss action dismissed")
+        case .infectedLocationPanel:
+          print("what should I do?")
+        case .visitedLocationsPanel:
+          dismissMatchedLocationsPanel()
         }
       }
+      var shouldDismissDrawer = oldValue != .none && oldValue == drawerContent
+      let action: (() -> ())?
+      switch drawerContent {
+      case .none: // dismiss drawer
+        shouldDismissDrawer = true
+        action = nil
+      case .changeStatusView:
+        action = displayChangeStatusView
+      case .infectedLocationPanel:
+        action = self.displayInfectedLocationPanel
+      case .visitedLocationsPanel:
+        action = displayMatchedLocationsPanel
+      }
+      
+      switchDrawerCotent(shouldDismissDrawer: shouldDismissDrawer, switchingContentAction: action)
+    }
+  }
+  
+  private func switchDrawerCotent(shouldDismissDrawer: Bool, switchingContentAction: (() -> ())? = nil) {
+    if shouldDismissDrawer {
+      dismissDrawer(completion: switchingContentAction)
+    } else {
+      switchingContentAction?()
     }
   }
 
@@ -222,21 +258,27 @@ class MainViewController: UIViewController {
   
   private func loadMatchedLocations() {
     guard let locations = locations else { return }
+    guard !locations.matchedLocations.isEmpty else {
+      matchedLocationsToMarkers = nil
+      return
+    }
+    
+    matchedLocationsToMarkers = [CoronaLocation: CodeOrangeMarker]()
     locations.matchedLocations.forEach { matchedLocation in
       addInfectedMatchedMarker(infectedLocation: matchedLocation.infectedLocation)
       addUserMatchedMarker(userLocation: matchedLocation.userLocation)
     }
-    guard !locations.matchedLocations.isEmpty else { return }
+    
     drawerContent = .visitedLocationsPanel
   }
   
   private func addInfectedMatchedMarker(infectedLocation: RecordedLocation) {
-    addCircleMarker(recordedLocation: infectedLocation, type: .matched)
+    let marker = addCircleMarker(recordedLocation: infectedLocation, type: .matched)
+    matchedLocationsToMarkers?[infectedLocation.location] = marker
   }
   
   private func addUserMatchedMarker(userLocation: RecordedLocation) {
-    let marker = CodeOrangeMarker(startTime: userLocation.startTime, endTime: userLocation.endTime, address: userLocation.address)
-    marker.icon = MarkerType.pastUserLocation.image
+    let marker = CodeOrangeMarker(startTime: userLocation.startTime, endTime: userLocation.endTime, address: userLocation.address, type: .pastUserLocation)
     marker.position = CLLocationCoordinate2D(latitude: userLocation.location.lat, longitude: userLocation.location.lon)
     marker.map = mapView
     markers.append(marker)
@@ -250,15 +292,17 @@ class MainViewController: UIViewController {
     }
   }
   
-  private func addCircleMarker(recordedLocation: RecordedLocation, type: MarkerType) {
+  
+  @discardableResult private func addCircleMarker(recordedLocation: RecordedLocation, type: MarkerType) -> CodeOrangeMarker {
     let marker = CodeOrangeMarker(startTime: recordedLocation.startTime,
                                   endTime: recordedLocation.endTime,
-                                  address: recordedLocation.address)
-    marker.icon = type.image
+                                  address: recordedLocation.address,
+                                  type: type)
     marker.groundAnchor = CGPoint(x: 0.5, y: 0.5)
     marker.position = CLLocationCoordinate2D(latitude: recordedLocation.location.lat, longitude: recordedLocation.location.lon)
     marker.map = mapView
     markers.append(marker)
+    return marker
   }
   
   @objc private func statusTapped() {
@@ -286,28 +330,26 @@ class MainViewController: UIViewController {
     showDrawer()
   }
   
-  private func displayMatchedLocationsPanel(_ matchedLocations: [MatchedLocation]) {
+  private func displayMatchedLocationsPanel() {
+    guard visitedLocationsPanel == nil else { return }
+    let matchedLocations = self.locations?.matchedLocations ?? []
     guard let visitedLocationsPanel = VisitedLocationsPanel(locations: matchedLocations) else { return }
+    self.visitedLocationsPanel = visitedLocationsPanel
     visitedLocationsPanel.delegate = self
     visitedLocationsPanel.translatesAutoresizingMaskIntoConstraints = false
     drawerView.contentView = visitedLocationsPanel
     showDrawer()
   }
   
+  func dismissMatchedLocationsPanel() {
+    visitedLocationsPanel = nil
+  }
+  
   private func showDrawer() {
-    guard drawerView.isHidden else {
-      return
-    }
-    UIView.animate(withDuration: 0.4) {
-      self.drawerView.isHidden = false
-    }
+    self.drawerView.isHidden = false
   }
   
   private func dismissDrawer(completion: (() -> ())? = nil) {
-    guard !drawerView.isHidden else {
-      completion?()
-      return
-    }
     UIView.animate(withDuration: 0.4, animations: {
       self.drawerView.isHidden = true
     }) { _ in
@@ -342,8 +384,9 @@ extension MainViewController: ChagneStatusViewDelegate {
 }
 
 extension MainViewController: VisitedLocationsPanelDelegate {
-  func visitedLocationsDidSelectLocation(_ location: MatchedLocation) {
-    let coordinate = CLLocationCoordinate2D(latitude: location.userLocation.location.lat, longitude: location.userLocation.location.lon)
+  func visitedLocationsDidSelectLocation(_ location: CoronaLocation) {
+    selectedMarker = matchedLocationsToMarkers?[location]
+    let coordinate = CLLocationCoordinate2D(latitude: location.lat, longitude: location.lon)
     let cameraUpdate = GMSCameraUpdate.setTarget(coordinate, zoom: 16)
     mapView.animate(with: cameraUpdate)
   }
@@ -371,13 +414,20 @@ extension MainViewController: ShareLocationViewDelegate {
 
 extension MainViewController: GMSMapViewDelegate {
   func mapView(_ mapView: GMSMapView, didTap marker: GMSMarker) -> Bool {
-    selectedMarker = marker as? CodeOrangeMarker
-    drawerContent = .infectedLocationPanel
+    guard let selectedMarker = marker as? CodeOrangeMarker else { return false }
+    switch selectedMarker.type {
+    case .matched, .infected:
+      self.selectedMarker = selectedMarker
+    case .pastUserLocation, .currentUserLocation, .selectedInfected, .selectedMatched:
+      return false
+    }
+    self.selectedMarker = selectedMarker
     return false
   }
   
   func mapView(_ mapView: GMSMapView, didTapAt coordinate: CLLocationCoordinate2D) {
     drawerContent = .none
+    selectedMarker = nil
   }
   
   func displayInfectedLocationPanel() {
@@ -390,45 +440,5 @@ extension MainViewController: GMSMapViewDelegate {
     infectedLocationPanel.translatesAutoresizingMaskIntoConstraints = false
     drawerView.contentView = infectedLocationPanel
     showDrawer()
-  }
-}
-
-class CodeOrangeMarker: GMSMarker {
-  var address: String?
-  var startTime: Date
-  var endTime: Date
-  
-  init(startTime: Date, endTime: Date, address: String?) {
-    self.startTime = startTime
-    self.endTime = endTime
-    self.address = address
-  }
-}
-
-enum MarkerType {
-  case infected
-  case selectedInfected
-  case matched
-  case selectedMatched
-  case currentUserLocation
-  case pastUserLocation
-}
-
-extension MarkerType {
-  var image: UIImage? {
-    switch self {
-    case .infected:
-      return UIImage(named: "infectedLocation")
-    case .selectedInfected:
-      return UIImage(named: "infectedSelectedLocation")
-    case .matched:
-      return UIImage(named: "matchedLocation")
-    case .selectedMatched:
-      return UIImage(named: "selectedMatchedLocation")
-    case .currentUserLocation:
-      return UIImage(named: "currentUserLocation")
-    case .pastUserLocation:
-      return UIImage(named: "pastUserLocation")
-    }
   }
 }
