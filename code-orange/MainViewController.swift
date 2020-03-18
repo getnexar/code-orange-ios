@@ -12,7 +12,7 @@ import GoogleMaps
 
 class MainViewController: UIViewController {
   
-  enum DrawerContent {
+  enum DrawerContent: Equatable {
     case none
     case changeStatusView
     case visitedLocationsPanel
