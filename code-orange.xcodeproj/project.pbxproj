@@ -18,6 +18,7 @@
 		233B0F56241FA3CE00F776CC /* Buttons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 233B0F55241FA3CE00F776CC /* Buttons.swift */; };
 		234AF3E72420C3FA008095FE /* ShareLocationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 234AF3E62420C3FA008095FE /* ShareLocationsView.swift */; };
 		234AF3E92421AC60008095FE /* InfectedLocationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 234AF3E82421AC5F008095FE /* InfectedLocationView.swift */; };
+		234AF3ED242267F0008095FE /* style.json in Resources */ = {isa = PBXBuildFile; fileRef = 234AF3EC242267EF008095FE /* style.json */; };
 		7787D86F2420EAC5009B81AD /* WelcomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7787D86E2420EAC5009B81AD /* WelcomeViewController.swift */; };
 		7789EA6F241E532400BC92E4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7789EA6E241E532400BC92E4 /* AppDelegate.swift */; };
 		7789EA73241E532400BC92E4 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7789EA72241E532400BC92E4 /* MainViewController.swift */; };
@@ -62,6 +63,7 @@
 		234AF3E4241FC419008095FE /* he-IL */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "he-IL"; path = "he-IL.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
 		234AF3E62420C3FA008095FE /* ShareLocationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareLocationsView.swift; sourceTree = "<group>"; };
 		234AF3E82421AC5F008095FE /* InfectedLocationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfectedLocationView.swift; sourceTree = "<group>"; };
+		234AF3EC242267EF008095FE /* style.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = style.json; sourceTree = "<group>"; };
 		3130236DCDD5C9020FEC93E4 /* Pods-code-orangeTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-code-orangeTests.debug.xcconfig"; path = "Target Support Files/Pods-code-orangeTests/Pods-code-orangeTests.debug.xcconfig"; sourceTree = "<group>"; };
 		46DA6F21814C524D83C16103 /* Pods-code-orange.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-code-orange.debug.xcconfig"; path = "Target Support Files/Pods-code-orange/Pods-code-orange.debug.xcconfig"; sourceTree = "<group>"; };
 		4A0A0F8B1012E417F5BBBA96 /* Pods-code-orange.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-code-orange.release.xcconfig"; path = "Target Support Files/Pods-code-orange/Pods-code-orange.release.xcconfig"; sourceTree = "<group>"; };
@@ -145,6 +147,7 @@
 		7789EA6D241E532400BC92E4 /* code-orange */ = {
 			isa = PBXGroup;
 			children = (
+				234AF3EC242267EF008095FE /* style.json */,
 				77A37156241F899D00913FB3 /* UIColorExtension.swift */,
 				7789EA6E241E532400BC92E4 /* AppDelegate.swift */,
 				7789EA7A241E532400BC92E4 /* Assets.xcassets */,
@@ -283,6 +286,7 @@
 				7789EA7E241E532400BC92E4 /* LaunchScreen.storyboard in Resources */,
 				7789EA7B241E532400BC92E4 /* Assets.xcassets in Resources */,
 				D25B8CAC241F637500C6DCB8 /* TLV-Test-Ride-Intinerary.gpx in Resources */,
+				234AF3ED242267F0008095FE /* style.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

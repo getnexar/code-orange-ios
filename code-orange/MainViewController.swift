@@ -107,6 +107,15 @@ class MainViewController: UIViewController {
     let location = currentLocationProvider?.currentLocation ?? MainViewController.defaultLocation
     let mapView = GMSMapView(frame: .zero, camera: GMSCameraPosition(target: location, zoom: MainViewController.initialZoomLevel))
     mapView.delegate = self
+    do {
+      if let styleURL = Bundle.main.url(forResource: "style", withExtension: "json") {
+        mapView.mapStyle = try GMSMapStyle(contentsOfFileURL: styleURL)
+      } else {
+        print("Unable to find style.json")
+      }
+    } catch {
+      print("map style failed to load. \(error)")
+    }
     return mapView
   }()
   
