@@ -13,7 +13,7 @@ protocol DataFetcher {
   func getInfectedLocations() -> [COLocation]
 }
 
-protocol DataSetter {
+protocol DataUploader {
   func shareInfectedLocations(_ locations: [COLocation])
 }
 
@@ -77,7 +77,7 @@ extension Communicator: DataFetcher {
   }
 }
 
-extension Communicator: DataSetter {
+extension Communicator: DataUploader {
   
   private struct ServerStructure: Codable {
     var patientStatus: String
@@ -86,7 +86,7 @@ extension Communicator: DataSetter {
   }
 
   private struct MinistryOfHealthStructure: Codable {
-    var patientStatus: Int
+    var patientCode: Int
     var locations: [COLocation]
   }
 
@@ -108,7 +108,7 @@ extension Communicator: DataSetter {
   
   private func shareInfectedLocationsWithMinistryOfHealth(_ locations: [COLocation]) {
     guard let url = URL(string: serverExternalUrl) else { return }
-    let structure = MinistryOfHealthStructure(patientStatus: 1500, locations: locations)
+    let structure = MinistryOfHealthStructure(patientCode: 1500, locations: locations)
     
     guard let data = try? jsonEncoder.encode(structure) else {
       print("Error encoding locations to MoH")

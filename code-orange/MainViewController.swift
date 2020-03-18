@@ -23,8 +23,8 @@ class MainViewController: UIViewController {
   private var locationsProvider: LocationsProvider? {
     (UIApplication.shared.delegate as? AppDelegate)?.locationsProvider
   }
-  private var dataSetter: DataSetter? {
-    (UIApplication.shared.delegate as? AppDelegate)?.communicator as DataSetter?
+  private var dataUploader: DataUploader? {
+    (UIApplication.shared.delegate as? AppDelegate)?.communicator as DataUploader?
   }
   private var markers = [GMSMarker]()
 
@@ -373,11 +373,11 @@ extension MainViewController: ShareLocationViewDelegate {
   
   func shareLocationApproved(_ sender: UIView, code: String) {
     sender.removeFromSuperview()
-    guard let dataSetter = dataSetter, let matchedLocations = self.locations?.matchedLocations else {
+    guard let dataUploader = dataUploader, let matchedLocations = self.locations?.matchedLocations else {
       return
     }
     let locations = matchedLocations.compactMap { $0.userLocation }
-    dataSetter.shareInfectedLocations(locations)
+    dataUploader.shareInfectedLocations(locations)
   }
 }
 
