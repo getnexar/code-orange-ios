@@ -8,8 +8,8 @@
 import Foundation
 
 struct MatchedLocation {
-  var userLocation: RecordedLocation
-  var infectedLocation: RecordedLocation
+  var userLocation: COLocation
+  var infectedLocation: COLocation
 }
 
 class LocationMatcher {
@@ -22,8 +22,8 @@ class LocationMatcher {
     self.matchingTimeThreshold = matchingTimeThreshold
   }
   
-  func matchLocations(userLocations: [RecordedLocation],
-                      coronaLocations: [RecordedLocation]) -> [MatchedLocation] {
+  func matchLocations(userLocations: [COLocation],
+                      coronaLocations: [COLocation]) -> [MatchedLocation] {
     var matchingLocations = [MatchedLocation]()
     userLocations.forEach { userLocation in
       for coronaLocation in coronaLocations {

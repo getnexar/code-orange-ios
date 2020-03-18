@@ -16,6 +16,8 @@
 		233B0F52241F6C5E00F776CC /* Communicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 233B0F51241F6C5E00F776CC /* Communicator.swift */; };
 		233B0F54241FA01300F776CC /* ChangeStatusView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 233B0F53241FA01300F776CC /* ChangeStatusView.swift */; };
 		233B0F56241FA3CE00F776CC /* Buttons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 233B0F55241FA3CE00F776CC /* Buttons.swift */; };
+		234AF3E72420C3FA008095FE /* ShareLocationsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 234AF3E62420C3FA008095FE /* ShareLocationsView.swift */; };
+		234AF3E92421AC60008095FE /* InfectedLocationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 234AF3E82421AC5F008095FE /* InfectedLocationView.swift */; };
 		7787D86F2420EAC5009B81AD /* WelcomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7787D86E2420EAC5009B81AD /* WelcomeViewController.swift */; };
 		7789EA6F241E532400BC92E4 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7789EA6E241E532400BC92E4 /* AppDelegate.swift */; };
 		7789EA73241E532400BC92E4 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7789EA72241E532400BC92E4 /* MainViewController.swift */; };
@@ -33,6 +35,7 @@
 		D25B8CAC241F637500C6DCB8 /* TLV-Test-Ride-Intinerary.gpx in Resources */ = {isa = PBXBuildFile; fileRef = D25B8CAB241F637500C6DCB8 /* TLV-Test-Ride-Intinerary.gpx */; };
 		D25B8CAE241F81BC00C6DCB8 /* StorageService.swift in Sources */ = {isa = PBXBuildFile; fileRef = D25B8CAD241F81BC00C6DCB8 /* StorageService.swift */; };
 		D2B2736F2420BD0700E38EC5 /* InfectionNotifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2B2736E2420BD0700E38EC5 /* InfectionNotifier.swift */; };
+		D2B2737124212A2000E38EC5 /* CommunicatorMock.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2B2737024212A2000E38EC5 /* CommunicatorMock.swift */; };
 		DAEE11DFC0C433E44F174B2F /* Pods_code_orangeTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D05ABFE5D0AAECB7FA466E9 /* Pods_code_orangeTests.framework */; };
 		EBC2BDDE74924428CC46DD47 /* Pods_code_orange.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = DA767D39FD6802378DBB90C6 /* Pods_code_orange.framework */; };
 /* End PBXBuildFile section */
@@ -58,6 +61,8 @@
 		233B0F53241FA01300F776CC /* ChangeStatusView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChangeStatusView.swift; sourceTree = "<group>"; };
 		233B0F55241FA3CE00F776CC /* Buttons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Buttons.swift; sourceTree = "<group>"; };
 		234AF3E4241FC419008095FE /* he-IL */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "he-IL"; path = "he-IL.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
+		234AF3E62420C3FA008095FE /* ShareLocationsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareLocationsView.swift; sourceTree = "<group>"; };
+		234AF3E82421AC5F008095FE /* InfectedLocationView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfectedLocationView.swift; sourceTree = "<group>"; };
 		3130236DCDD5C9020FEC93E4 /* Pods-code-orangeTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-code-orangeTests.debug.xcconfig"; path = "Target Support Files/Pods-code-orangeTests/Pods-code-orangeTests.debug.xcconfig"; sourceTree = "<group>"; };
 		46DA6F21814C524D83C16103 /* Pods-code-orange.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-code-orange.debug.xcconfig"; path = "Target Support Files/Pods-code-orange/Pods-code-orange.debug.xcconfig"; sourceTree = "<group>"; };
 		4A0A0F8B1012E417F5BBBA96 /* Pods-code-orange.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-code-orange.release.xcconfig"; path = "Target Support Files/Pods-code-orange/Pods-code-orange.release.xcconfig"; sourceTree = "<group>"; };
@@ -84,6 +89,7 @@
 		D25B8CAB241F637500C6DCB8 /* TLV-Test-Ride-Intinerary.gpx */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "TLV-Test-Ride-Intinerary.gpx"; sourceTree = "<group>"; };
 		D25B8CAD241F81BC00C6DCB8 /* StorageService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageService.swift; sourceTree = "<group>"; };
 		D2B2736E2420BD0700E38EC5 /* InfectionNotifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfectionNotifier.swift; sourceTree = "<group>"; };
+		D2B2737024212A2000E38EC5 /* CommunicatorMock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommunicatorMock.swift; sourceTree = "<group>"; };
 		DA767D39FD6802378DBB90C6 /* Pods_code_orange.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_code_orange.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -165,6 +171,8 @@
 				D25B8CAD241F81BC00C6DCB8 /* StorageService.swift */,
 				D2B2736E2420BD0700E38EC5 /* InfectionNotifier.swift */,
 				D25B8CAB241F637500C6DCB8 /* TLV-Test-Ride-Intinerary.gpx */,
+				234AF3E62420C3FA008095FE /* ShareLocationsView.swift */,
+				234AF3E82421AC5F008095FE /* InfectedLocationView.swift */,
 			);
 			path = "code-orange";
 			sourceTree = "<group>";
@@ -176,6 +184,7 @@
 				233B0F48241EA53000F776CC /* LocationMatcherTests.swift */,
 				7789EA8A241E532400BC92E4 /* Info.plist */,
 				233B0F4D241EB18C00F776CC /* RecordedLocationTests.swift */,
+				D2B2737024212A2000E38EC5 /* CommunicatorMock.swift */,
 			);
 			path = "code-orangeTests";
 			sourceTree = "<group>";
@@ -370,8 +379,10 @@
 				77A3715B241F982400913FB3 /* DrawerView.swift in Sources */,
 				7789EA79241E532400BC92E4 /* code_orange.xcdatamodeld in Sources */,
 				77AA054A241EB904002EC3DF /* CurrentLocationProvider.swift in Sources */,
+				234AF3E72420C3FA008095FE /* ShareLocationsView.swift in Sources */,
 				77A37157241F899D00913FB3 /* UIColorExtension.swift in Sources */,
 				D2B2736F2420BD0700E38EC5 /* InfectionNotifier.swift in Sources */,
+				234AF3E92421AC60008095FE /* InfectedLocationView.swift in Sources */,
 				233B0F4C241EAD7B00F776CC /* LocationsProvider.swift in Sources */,
 				233B0F50241F6A7000F776CC /* StaticData.swift in Sources */,
 				233B0F47241E8D2600F776CC /* RecordedLocation.swift in Sources */,
@@ -385,6 +396,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D2B2737124212A2000E38EC5 /* CommunicatorMock.swift in Sources */,
 				233B0F4E241EB18C00F776CC /* RecordedLocationTests.swift in Sources */,
 				7789EA89241E532400BC92E4 /* code_orangeTests.swift in Sources */,
 				233B0F4A241EA53B00F776CC /* LocationMatcherTests.swift in Sources */,

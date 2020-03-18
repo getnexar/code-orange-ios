@@ -16,6 +16,7 @@ class MainViewController: UIViewController {
     case none
     case changeStatusView
     case visitedLocationsPanel
+    case infectedLocationPanel
     case permissions(minimized: Bool)
   }
   
@@ -32,6 +33,8 @@ class MainViewController: UIViewController {
   }
   private static let initialZoomLevel: Float = 9
   private static let defaultLocation = CLLocationCoordinate2D(latitude: 32.086801, longitude: 34.789749)
+  private var shareLocationView : ShareLocationView?
+  private var selectedMarker: CodeOrangeMarker?
   
   private var drawerContent: DrawerContent = .none {
     didSet {
@@ -41,6 +44,14 @@ class MainViewController: UIViewController {
       case .changeStatusView:
         dismissDrawer() {
           self.displayChangeStatusView()
+        }
+      case .infectedLocationPanel:
+        if oldValue == drawerContent {
+          displayInfectedLocationPanel()
+        } else {
+          dismissDrawer() {
+            self.displayInfectedLocationPanel()
+          }
         }
       case .visitedLocationsPanel:
         dismissDrawer() {
@@ -61,10 +72,6 @@ class MainViewController: UIViewController {
     stackView.addArrangedSubview(subtitleStack)
     stackView.addArrangedSubview(timeScrollView)
     stackView.addArrangedSubview(mapView)
-    stackView.addArrangedSubview(drawerView)
-    if #available(iOS 11.0, *) {
-      stackView.setCustomSpacing(-drawerView.layer.cornerRadius, after: mapView)
-    }
     return stackView
   }()
   
@@ -73,7 +80,7 @@ class MainViewController: UIViewController {
     stackView.spacing = 12
     stackView.axis = .horizontal
     stackView.isLayoutMarginsRelativeArrangement = true
-    stackView.layoutMargins = UIEdgeInsets(top: 0, left: 24, bottom: 24, right: 24)
+    stackView.layoutMargins = UIEdgeInsets(top: 0, left: 24, bottom: 0, right: 24)
     stackView.addArrangedSubview(statusButton)
     stackView.addArrangedSubview(UIView())
     stackView.addArrangedSubview(callEmergencyButton)
@@ -102,6 +109,7 @@ class MainViewController: UIViewController {
   private lazy var mapView: GMSMapView = {
     let location = currentLocationProvider?.currentLocation ?? MainViewController.defaultLocation
     let mapView = GMSMapView(frame: .zero, camera: GMSCameraPosition(target: location, zoom: MainViewController.initialZoomLevel))
+    mapView.delegate = self
     return mapView
   }()
   
@@ -181,13 +189,15 @@ class MainViewController: UIViewController {
     
     view.backgroundColor = .white
     view.addSubview(mainStack)
-    mainStack.pin(to: view, anchors: [.leading(0), .trailing(0), .top(28), .bottom(-24)])
+    view.addSubview(drawerView)
+    mainStack.pin(to: view, anchors: [.leading(0), .trailing(0), .top(28), .bottom(0)])
+    drawerView.pin(to: view, anchors: [.leading(0), .trailing(0), .bottom(-24)])
+
+    NotificationCenter.default.addObserver(self,
+                                           selector: #selector(getFreshLocations),
+                                           name: NSNotification.Name("downloadCompleted"),
+                                           object: nil)
   }
-  
-  deinit {
-    NotificationCenter.default.removeObserver(self)
-  }
-  
   override func viewDidAppear(_ animated: Bool) {
     super.viewDidAppear(animated)
     refreshLocation()
@@ -204,14 +214,14 @@ class MainViewController: UIViewController {
     return insets
   }
   
-  private func getFreshLocations() {
+  @objc private func getFreshLocations() {
     locations = locationsProvider?.getLocations()
   }
   
   private func reloadCoordinates() {
     removeMarkers()
     loadMatchedLocations()
-    loadOtherLocations()
+    loadInfectedLocations()
   }
   
   private func removeMarkers() {
@@ -229,34 +239,33 @@ class MainViewController: UIViewController {
     drawerContent = .visitedLocationsPanel
   }
   
-  private func addInfectedMatchedMarker(infectedLocation: RecordedLocation) {
-    addCircleMarker(lat: infectedLocation.location.lat, lon: infectedLocation.location.lon, color: .orange)
+  private func addInfectedMatchedMarker(infectedLocation: COLocation) {
+    addCircleMarker(recordedLocation: infectedLocation, type: .matched)
   }
   
-  private func addUserMatchedMarker(userLocation: RecordedLocation) {
-    let marker = GMSMarker()
-    let imageView = UIImageView(image: UIImage(named: "pastUserLocation"))
-    imageView.tintColor = .nxPurple60
-    marker.iconView = imageView
-    marker.position = CLLocationCoordinate2D(latitude: userLocation.location.lat, longitude: userLocation.location.lon)
+  private func addUserMatchedMarker(userLocation: COLocation) {
+    let marker = CodeOrangeMarker(startTime: userLocation.startTime, endTime: userLocation.endTime, address: userLocation.name)
+    marker.icon = MarkerType.pastUserLocation.image
+    marker.position = CLLocationCoordinate2D(latitude: userLocation.lat, longitude: userLocation.lon)
     marker.map = mapView
     markers.append(marker)
   }
   
-  private func loadOtherLocations() {
+  private func loadInfectedLocations() {
     guard let locations = locations else { return }
     
-    locations.otherLocations.suffix(100).forEach { infectedLocation in
-      addCircleMarker(lat: infectedLocation.location.lat, lon: infectedLocation.location.lon, color: .nxPurple60)
+    locations.otherLocations.forEach { infectedLocation in
+      addCircleMarker(recordedLocation: infectedLocation, type: .infected)
     }
   }
   
-  private func addCircleMarker(lat: Double, lon: Double, color: UIColor) {
-    let circleView = CircleMarkerView(color: color)
-    let marker = GMSMarker()
-    marker.iconView = circleView
+  private func addCircleMarker(recordedLocation: COLocation, type: MarkerType) {
+    let marker = CodeOrangeMarker(startTime: recordedLocation.startTime,
+                                  endTime: recordedLocation.endTime,
+                                  address: recordedLocation.name)
+    marker.icon = type.image
     marker.groundAnchor = CGPoint(x: 0.5, y: 0.5)
-    marker.position = CLLocationCoordinate2D(latitude: lat, longitude: lon)
+    marker.position = CLLocationCoordinate2D(latitude: recordedLocation.lat, longitude: recordedLocation.lon)
     marker.map = mapView
     markers.append(marker)
   }
@@ -335,6 +344,15 @@ class MainViewController: UIViewController {
     }
   }
   
+  private func presentShareLocationScreen() {
+    let shareLocationView = ShareLocationView()
+    shareLocationView.translatesAutoresizingMaskIntoConstraints = false
+    view.addSubview(shareLocationView)
+    shareLocationView.fillSuperview()
+    shareLocationView.delegate = self
+    self.shareLocationView = shareLocationView
+  }
+  
   private func refreshLocation() {
     switch CLLocationManager.authorizationStatus() {
     case .authorizedAlways:
@@ -360,9 +378,14 @@ class MainViewController: UIViewController {
 }
 
 extension MainViewController: ChagneStatusViewDelegate {
-  func statusChanged(to: StatusOption) {
+  func statusChanged(to status: StatusOption) {
     drawerContent = .none
-    // bring on the next screen
+    switch status {
+    case .infected:
+      presentShareLocationScreen()
+    default:
+      print("We do not report on status \(status.description)")
+    }
   }
   
   func statusChangeDismissed() {
@@ -372,7 +395,7 @@ extension MainViewController: ChagneStatusViewDelegate {
 
 extension MainViewController: VisitedLocationsPanelDelegate {
   func visitedLocationsDidSelectLocation(_ location: MatchedLocation) {
-    let coordinate = CLLocationCoordinate2D(latitude: location.userLocation.location.lat, longitude: location.userLocation.location.lon)
+    let coordinate = CLLocationCoordinate2D(latitude: location.userLocation.lat, longitude: location.userLocation.lon)
     let cameraUpdate = GMSCameraUpdate.setTarget(coordinate, zoom: 16)
     mapView.animate(with: cameraUpdate)
   }
@@ -424,5 +447,81 @@ class CircleMarkerView: UIView {
   
   required init?(coder aDecoder: NSCoder) {
     fatalError("init(coder:) has not been implemented")
+  }
+}
+
+extension MainViewController: ShareLocationViewDelegate {
+  func shareLocationsDismissed(_ sender: UIView) {
+    sender.removeFromSuperview()
+    shareLocationView = nil
+  }
+  
+  func shareLocationApproved(_ sender: UIView, code: String) {
+    sender.removeFromSuperview()
+    // trigger the location sharing backend here
+  }
+}
+
+extension MainViewController: GMSMapViewDelegate {
+  func mapView(_ mapView: GMSMapView, didTap marker: GMSMarker) -> Bool {
+    selectedMarker = marker as? CodeOrangeMarker
+    drawerContent = .infectedLocationPanel
+    return false
+  }
+  
+  func mapView(_ mapView: GMSMapView, didTapAt coordinate: CLLocationCoordinate2D) {
+    drawerContent = .none
+  }
+  
+  func displayInfectedLocationPanel() {
+    guard let selectedMarker = selectedMarker else {
+      print("No selected marker")
+        return
+    }
+    
+    let infectedLocationPanel = InfectedLocationView(startTime: selectedMarker.startTime, endTime: selectedMarker.endTime, address: selectedMarker.address)
+    infectedLocationPanel.translatesAutoresizingMaskIntoConstraints = false
+    drawerView.contentView = infectedLocationPanel
+    showDrawer()
+  }
+}
+
+class CodeOrangeMarker: GMSMarker {
+  var address: String?
+  var startTime: Date
+  var endTime: Date
+  
+  init(startTime: Date, endTime: Date, address: String?) {
+    self.startTime = startTime
+    self.endTime = endTime
+    self.address = address
+  }
+}
+
+enum MarkerType {
+  case infected
+  case selectedInfected
+  case matched
+  case selectedMatched
+  case currentUserLocation
+  case pastUserLocation
+}
+
+extension MarkerType {
+  var image: UIImage? {
+    switch self {
+    case .infected:
+      return UIImage(named: "infectedLocation")
+    case .selectedInfected:
+      return UIImage(named: "infectedSelectedLocation")
+    case .matched:
+      return UIImage(named: "matchedLocation")
+    case .selectedMatched:
+      return UIImage(named: "selectedMatchedLocation")
+    case .currentUserLocation:
+      return UIImage(named: "currentUserLocation")
+    case .pastUserLocation:
+      return UIImage(named: "pastUserLocation")
+    }
   }
 }

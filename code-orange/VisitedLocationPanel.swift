@@ -95,14 +95,14 @@ class VisitedLocationsPanel: UIView {
 
   private lazy var leftPageButton: UIButton = {
     let button = UIButton()
-    button.setImage(UIImage(named: "left"), for: .normal)
+    button.setImage(getLocalizedImage(image: UIImage(named: "left")), for: .normal)
     button.addTarget(self, action: #selector(previousLocationTapped), for: .touchUpInside)
     return button
   }()
 
   private lazy var rightPageButton: UIButton = {
     let button = UIButton()
-    button.setImage(UIImage(named: "right"), for: .normal)
+    button.setImage(getLocalizedImage(image: UIImage(named: "right")), for: .normal)
     button.addTarget(self, action: #selector(nextLocationPickedTapped), for: .touchUpInside)
     return button
   }()
@@ -117,12 +117,6 @@ class VisitedLocationsPanel: UIView {
     let label = UILabel()
     label.font = UIFont.boldSystemFont(ofSize: 16)
     return label
-  }()
-  
-  private lazy var timeFormatter: DateFormatter = {
-    let dateFormater = DateFormatter()
-    dateFormater.dateFormat = "HH:MM"
-    return dateFormater
   }()
 
   private lazy var timeframeLabel: UILabel = {
@@ -204,14 +198,13 @@ class VisitedLocationsPanel: UIView {
   private func reloadData() {
     let hasSingleLocation = locations.count < 2
     let currentLocation = locations[currentLocationIndex]
-    let startTime = timeFormatter.string(from: currentLocation.userLocation.startTime)
-    let endTime = timeFormatter.string(from: currentLocation.userLocation.endTime)
-    timeframeLabel.text = "\(startTime) - \(endTime)"
+    timeframeLabel.text = getCodeOrangeFullDateString(startTime: currentLocation.userLocation.startTime,
+                                                      endTime: currentLocation.userLocation.endTime)
     pagesLabel.text = "\(currentLocationIndex + 1)/\(locations.count)"
     leftPageButton.isHidden = hasSingleLocation
     rightPageButton.isHidden = hasSingleLocation
     pagesLabel.isHidden = hasSingleLocation
-    addressLabel.text = currentLocation.infectedLocation.address ?? currentLocation.userLocation.address
+    addressLabel.text = currentLocation.infectedLocation.name
   }
 }
 

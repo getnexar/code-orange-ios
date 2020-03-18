@@ -57,7 +57,12 @@ extension StorageService {
     let zone = Zone(context: managedContext)
     zone.setValue(location.coordinate.latitude, forKeyPath: "latitude")
     zone.setValue(location.coordinate.longitude, forKeyPath: "longitude")
-    zone.setValue(date, forKeyPath: "dateEnter")
+
+    let startTime = Calendar.current.date(byAdding: .minute, value: -15, to: date)
+    zone.setValue(startTime, forKeyPath: "startTime")
+
+    let endTime = Calendar.current.date(byAdding: .minute, value: 15, to: date)
+    zone.setValue(endTime, forKeyPath: "endTime")
 
     do {
       try managedContext.save()
