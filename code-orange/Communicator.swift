@@ -47,7 +47,7 @@ class Communicator {
   // this is temp implementation, until we connect with the api
   private func getFromAPI() -> String {
 //    return StaticData.serverData
-    return StaticData.newShortData
+    return StaticData.newServerData
   }
   
   private func getFromStorage() -> String {

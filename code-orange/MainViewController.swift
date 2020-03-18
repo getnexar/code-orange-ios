@@ -110,7 +110,6 @@ class MainViewController: UIViewController {
   private lazy var mapView: GMSMapView = {
     let location = currentLocationProvider?.currentLocation ?? MainViewController.defaultLocation
     let mapView = GMSMapView(frame: .zero, camera: GMSCameraPosition(target: location, zoom: MainViewController.initialZoomLevel))
-    mapView.isMyLocationEnabled = true
     mapView.delegate = self
     return mapView
   }()
@@ -215,7 +214,7 @@ class MainViewController: UIViewController {
   private func reloadCoordinates() {
     removeMarkers()
     loadMatchedLocations()
-    loadOtherLocations()
+    loadInfectedLocations()
   }
   
   private func removeMarkers() {
@@ -234,33 +233,30 @@ class MainViewController: UIViewController {
   }
   
   private func addInfectedMatchedMarker(infectedLocation: RecordedLocation) {
-    addCircleMarker(recordedLocation: infectedLocation, color: .orange)
+    addCircleMarker(recordedLocation: infectedLocation, type: .matched)
   }
   
   private func addUserMatchedMarker(userLocation: RecordedLocation) {
     let marker = CodeOrangeMarker(startTime: userLocation.startTime, endTime: userLocation.endTime, address: userLocation.address)
-    let imageView = UIImageView(image: UIImage(named: "pastUserLocation"))
-    imageView.tintColor = .nxPurple60
-    marker.iconView = imageView
+    marker.icon = MarkerType.pastUserLocation.image
     marker.position = CLLocationCoordinate2D(latitude: userLocation.location.lat, longitude: userLocation.location.lon)
     marker.map = mapView
     markers.append(marker)
   }
   
-  private func loadOtherLocations() {
+  private func loadInfectedLocations() {
     guard let locations = locations else { return }
     
-    locations.otherLocations.suffix(100).forEach { infectedLocation in
-      addCircleMarker(recordedLocation: infectedLocation, color: .nxPurple60)
+    locations.otherLocations.forEach { infectedLocation in
+      addCircleMarker(recordedLocation: infectedLocation, type: .infected)
     }
   }
   
-  private func addCircleMarker(recordedLocation: RecordedLocation, color: UIColor) {
-    let circleView = CircleMarkerView(color: color)
+  private func addCircleMarker(recordedLocation: RecordedLocation, type: MarkerType) {
     let marker = CodeOrangeMarker(startTime: recordedLocation.startTime,
                                   endTime: recordedLocation.endTime,
                                   address: recordedLocation.address)
-    marker.iconView = circleView
+    marker.icon = type.image
     marker.groundAnchor = CGPoint(x: 0.5, y: 0.5)
     marker.position = CLLocationCoordinate2D(latitude: recordedLocation.location.lat, longitude: recordedLocation.location.lon)
     marker.map = mapView
@@ -395,23 +391,6 @@ extension MainViewController: GMSMapViewDelegate {
   }
 }
 
-class CircleMarkerView: UIView {
-  init(color: UIColor) {
-    super.init(frame: .zero)
-    translatesAutoresizingMaskIntoConstraints = false
-    backgroundColor = color
-    alpha = 0.4
-    setAutoLayoutWidth(30)
-    setSquareRatio()
-    layer.masksToBounds = true
-    cornerRadius = 15
-  }
-  
-  required init?(coder aDecoder: NSCoder) {
-    fatalError("init(coder:) has not been implemented")
-  }
-}
-
 class CodeOrangeMarker: GMSMarker {
   var address: String?
   var startTime: Date
@@ -421,5 +400,33 @@ class CodeOrangeMarker: GMSMarker {
     self.startTime = startTime
     self.endTime = endTime
     self.address = address
+  }
+}
+
+enum MarkerType {
+  case infected
+  case selectedInfected
+  case matched
+  case selectedMatched
+  case currentUserLocation
+  case pastUserLocation
+}
+
+extension MarkerType {
+  var image: UIImage? {
+    switch self {
+    case .infected:
+      return UIImage(named: "infectedLocation")
+    case .selectedInfected:
+      return UIImage(named: "infectedSelectedLocation")
+    case .matched:
+      return UIImage(named: "matchedLocation")
+    case .selectedMatched:
+      return UIImage(named: "selectedMatchedLocation")
+    case .currentUserLocation:
+      return UIImage(named: "currentUserLocation")
+    case .pastUserLocation:
+      return UIImage(named: "pastUserLocation")
+    }
   }
 }
