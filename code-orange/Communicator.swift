@@ -25,6 +25,8 @@ class Communicator {
     return jsonDecoder
   }()
 
+  private let queue = DispatchQueue(label: "CommunicatorReadWrite.queue", attributes: .concurrent)
+
   private var infectedLocations = [COLocation]()
 
   init(session: URLSession = .shared) {
@@ -50,7 +52,11 @@ extension Communicator: DataFetcher {
         do {
           guard let self = self else { return }
           let res = try self.jsonDecoder.decode(COLocations.self, from: data)
-          self.infectedLocations = res.locations ?? []
+
+          self.queue.sync(flags: .barrier) {
+            self.infectedLocations = res.locations ?? []
+          }
+
           print("Downloaded \(self.infectedLocations.count) infected locations")
           // TODO: Replace with delegate pattern to notify data consumers
           self.notifyDownloadCompleted()
@@ -62,6 +68,6 @@ extension Communicator: DataFetcher {
   }
 
   func getInfectedLocations() -> [COLocation] {
-    return infectedLocations
+      queue.sync { return infectedLocations }
   }
 }
